@@ -2,6 +2,7 @@ using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using Microsoft.Win32;
 using NovaDownload.App.Services;
+using NovaDownload.BrowserIntegration;
 using NovaDownload.Core.Interfaces;
 using NovaDownload.Core.Localization;
 
@@ -11,6 +12,7 @@ public partial class SettingsViewModel : LocalizedViewModel
 {
     private readonly ISettingsService _settings;
     private readonly ThemeService _theme;
+    private readonly BrowserIntegrationService _bridge;
     private bool _loading;
 
     [ObservableProperty] private string downloadDirectory = string.Empty;
@@ -20,19 +22,45 @@ public partial class SettingsViewModel : LocalizedViewModel
     [ObservableProperty] private bool isDark;
     [ObservableProperty] private bool hasSaved;
 
+    // Browser integration
+    [ObservableProperty] private bool enableBrowserIntegration = true;
+    [ObservableProperty] private bool activateOnBrowserDownload = true;
+    [ObservableProperty] private string browserMessage = string.Empty;
+
+    private string _registeredBrowsers = string.Empty;
+    private bool _nativeHostFound = true;
+
     // Language chips: exactly one is checked, and the checked one owns the preference.
     [ObservableProperty] private bool useSystemLanguage = true;
     [ObservableProperty] private bool useEnglish;
     [ObservableProperty] private bool useFrench;
 
-    public SettingsViewModel(ISettingsService settings, ThemeService theme)
+    public SettingsViewModel(ISettingsService settings, ThemeService theme, BrowserIntegrationService bridge)
     {
         _settings = settings;
         _theme = theme;
+        _bridge = bridge;
         Load();
+        RefreshBrowserState();
     }
 
     public string SavedMessage => HasSaved ? Localizer.Get("Set_Saved") : string.Empty;
+
+    /// <summary>Registration + bridge state, recomposed for the active language.</summary>
+    public string BrowserStatusText
+    {
+        get
+        {
+            if (!_nativeHostFound) return Localizer.Get("Set_BrowserHostMissing");
+            var scope = _registeredBrowsers.Length == 0
+                ? Localizer.Get("Set_BrowserNone")
+                : Localizer.Format("Set_BrowserRegisteredFor", _registeredBrowsers);
+            return Localizer.Format(_bridge.IsRunning ? "Set_BrowserStatusReady" : "Set_BrowserStatusIdle", scope);
+        }
+    }
+
+    public string BrowserIdsText =>
+        Localizer.Format("Set_BrowserIds", BrowserIntegrationInfo.ChromiumExtensionId, BrowserIntegrationInfo.FirefoxExtensionId);
 
     private void Load()
     {
@@ -44,6 +72,8 @@ public partial class SettingsViewModel : LocalizedViewModel
             MaxConcurrentDownloads = current.MaxConcurrentDownloads;
             NotifyOnComplete = current.NotifyOnComplete;
             MinimizeToTray = current.MinimizeToTray;
+            EnableBrowserIntegration = current.EnableBrowserIntegration;
+            ActivateOnBrowserDownload = current.ActivateOnBrowserDownload;
             IsDark = _theme.IsDark;
 
             switch (current.Language)
@@ -65,9 +95,62 @@ public partial class SettingsViewModel : LocalizedViewModel
         }
     }
 
-    protected override void OnLanguageChanged() => Raise(nameof(SavedMessage));
+    protected override void OnLanguageChanged() => Raise(
+        nameof(SavedMessage), nameof(BrowserStatusText), nameof(BrowserIdsText));
 
     partial void OnHasSavedChanged(bool value) => Raise(nameof(SavedMessage));
+
+    partial void OnEnableBrowserIntegrationChanged(bool value)
+    {
+        if (_loading) return;
+        _settings.Current.EnableBrowserIntegration = value;
+        _ = _settings.SaveAsync();
+        Raise(nameof(BrowserStatusText));
+    }
+
+    partial void OnActivateOnBrowserDownloadChanged(bool value)
+    {
+        if (_loading) return;
+        _settings.Current.ActivateOnBrowserDownload = value;
+        _ = _settings.SaveAsync();
+    }
+
+    /// <summary>Reads the current per-user registration and bridge state without changing anything.</summary>
+    private void RefreshBrowserState()
+    {
+        try
+        {
+            _nativeHostFound = NativeHostLocator.TryResolve(out _) != null;
+            var report = _bridge.InspectRegistration();
+            _registeredBrowsers = string.Join(", ", report.Registered
+                .Select(entry => string.IsNullOrEmpty(entry.BrowserVersion)
+                    ? entry.DisplayName
+                    : $"{entry.DisplayName} {entry.BrowserVersion}"));
+        }
+        catch
+        {
+            _nativeHostFound = false;
+            _registeredBrowsers = string.Empty;
+        }
+
+        Raise(nameof(BrowserStatusText));
+    }
+
+    /// <summary>Writes the native messaging manifests and registry keys for the current user.</summary>
+    [RelayCommand]
+    private void RegisterBrowserIntegration()
+    {
+        var report = _bridge.RegisterForCurrentUser(out var error);
+        var names = string.Join(", ", report.Registered.Select(entry => entry.DisplayName));
+
+        BrowserMessage = error is not null
+            ? Localizer.Format("Set_BrowserRegistrationFailed", error)
+            : names.Length == 0
+                ? Localizer.Get("Set_BrowserHostMissing")
+                : Localizer.Format("Set_BrowserRegistered", names);
+
+        RefreshBrowserState();
+    }
 
     partial void OnUseSystemLanguageChanged(bool value)
     {

@@ -19,6 +19,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "NovaDownload.UnitTests", "t
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "NovaDownload.IntegrationTests", "tests\NovaDownload.IntegrationTests\NovaDownload.IntegrationTests.csproj", "{EEF0EECF-7A2B-4549-8568-3319D99D7D1B}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "NovaDownload.NativeHost", "src\NovaDownload.NativeHost\NovaDownload.NativeHost.csproj", "{917370CE-D93E-4968-989D-4E35E7691746}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -113,6 +115,18 @@ Global
 		{EEF0EECF-7A2B-4549-8568-3319D99D7D1B}.Release|x64.Build.0 = Release|Any CPU
 		{EEF0EECF-7A2B-4549-8568-3319D99D7D1B}.Release|x86.ActiveCfg = Release|Any CPU
 		{EEF0EECF-7A2B-4549-8568-3319D99D7D1B}.Release|x86.Build.0 = Release|Any CPU
+		{917370CE-D93E-4968-989D-4E35E7691746}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{917370CE-D93E-4968-989D-4E35E7691746}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{917370CE-D93E-4968-989D-4E35E7691746}.Debug|x64.ActiveCfg = Debug|Any CPU
+		{917370CE-D93E-4968-989D-4E35E7691746}.Debug|x64.Build.0 = Debug|Any CPU
+		{917370CE-D93E-4968-989D-4E35E7691746}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{917370CE-D93E-4968-989D-4E35E7691746}.Debug|x86.Build.0 = Debug|Any CPU
+		{917370CE-D93E-4968-989D-4E35E7691746}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{917370CE-D93E-4968-989D-4E35E7691746}.Release|Any CPU.Build.0 = Release|Any CPU
+		{917370CE-D93E-4968-989D-4E35E7691746}.Release|x64.ActiveCfg = Release|Any CPU
+		{917370CE-D93E-4968-989D-4E35E7691746}.Release|x64.Build.0 = Release|Any CPU
+		{917370CE-D93E-4968-989D-4E35E7691746}.Release|x86.ActiveCfg = Release|Any CPU
+		{917370CE-D93E-4968-989D-4E35E7691746}.Release|x86.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -125,5 +139,6 @@ Global
 		{2715426B-6B67-4FD3-981A-1428644ED329} = {827E0CD3-B72D-47B6-A68D-7590B98EB39B}
 		{7E51DC00-80F4-48C7-A383-E2518C2F76B1} = {827E0CD3-B72D-47B6-A68D-7590B98EB39B}
 		{EEF0EECF-7A2B-4549-8568-3319D99D7D1B} = {827E0CD3-B72D-47B6-A68D-7590B98EB39B}
+		{917370CE-D93E-4968-989D-4E35E7691746} = {827E0CD3-B72D-47B6-A68D-7590B98EB39B}
 	EndGlobalSection
 EndGlobal

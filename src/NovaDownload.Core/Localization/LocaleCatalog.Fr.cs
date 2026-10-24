@@ -130,6 +130,22 @@ internal static partial class LocaleCatalog
         ["Btn_Save"] = "Enregistrer",
         ["Set_Saved"] = "Enregistré — le parallélisme s'applique au prochain démarrage.",
 
+        // ---- intégration navigateur --------------------------------------------
+        ["Set_BrowserTitle"] = "Intégration navigateur",
+        ["Set_BrowserSubtitle"] = "Envoyez les téléchargements de Chrome, Edge et Firefox directement dans cette file.",
+        ["Set_BrowserEnable"] = "Accepter les téléchargements envoyés par les extensions",
+        ["Set_BrowserActivate"] = "Mettre NovaDownload au premier plan quand un téléchargement arrive",
+        ["Set_BrowserStatusLabel"] = "ÉTAT",
+        ["Set_BrowserStatusReady"] = "{0} · liaison bureau active",
+        ["Set_BrowserStatusIdle"] = "{0} · liaison bureau arrêtée",
+        ["Set_BrowserRegisteredFor"] = "enregistrée pour {0}",
+        ["Set_BrowserNone"] = "pas encore enregistrée pour un navigateur",
+        ["Set_BrowserHostMissing"] = "hôte de messagerie native introuvable à côté de NovaDownload — réinstallez ou recompilez l'intégration navigateur",
+        ["Set_BrowserIds"] = "Identifiant d'extension {0} (Chrome/Edge) · {1} (Firefox)",
+        ["Btn_RegisterBrowser"] = "Enregistrer",
+        ["Set_BrowserRegistered"] = "Intégration navigateur enregistrée pour {0}.",
+        ["Set_BrowserRegistrationFailed"] = "Échec de l'enregistrement : {0}",
+
         // ---- status ------------------------------------------------------------
         ["Status_Queued"] = "En file",
         ["Status_Downloading"] = "Téléchargement",

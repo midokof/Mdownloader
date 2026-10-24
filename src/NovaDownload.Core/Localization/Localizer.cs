@@ -36,6 +36,16 @@ public static class Localizer
 
     public static event EventHandler? LanguageChanged;
 
+    /// <summary>
+    /// Raw string catalog for one language (<c>"en"</c> or <c>"fr"</c>); the active language when
+    /// no code is given. Read-only and stable: used by diagnostics and by the parity tests.
+    /// </summary>
+    public static IReadOnlyDictionary<string, string> Catalog(string? language = null)
+    {
+        var code = string.IsNullOrWhiteSpace(language) ? Language : language.Trim().ToLowerInvariant();
+        return Catalogs.TryGetValue(code, out var catalog) ? catalog : Catalogs["en"];
+    }
+
     public static string Get(string key)
     {
         if (_active.TryGetValue(key, out var value)) return value;

@@ -1,0 +1,220 @@
+{
+  "extName": {
+    "message": "NovaDownload",
+    "description": "Nom de l'extension affiché dans la barre d'outils et la liste des extensions."
+  },
+  "extDescription": {
+    "message": "Envoyez les téléchargements du navigateur vers NovaDownload.",
+    "description": "Description affichée dans la liste des extensions du navigateur."
+  },
+  "statusChecking": {
+    "message": "Vérification de NovaDownload…"
+  },
+  "statusConnected": {
+    "message": "Connecté"
+  },
+  "statusStarting": {
+    "message": "Démarrage de NovaDownload…"
+  },
+  "statusOffline": {
+    "message": "NovaDownload n'est pas lancé"
+  },
+  "statusDisabled": {
+    "message": "L'intégration navigateur est désactivée dans NovaDownload"
+  },
+  "sectionDetected": {
+    "message": "Détecté sur cette page"
+  },
+  "sectionCaptured": {
+    "message": "Vu par le navigateur"
+  },
+  "sectionUnsupported": {
+    "message": "Non pris en charge"
+  },
+  "sectionPageLink": {
+    "message": "Envoyer un lien"
+  },
+  "emptyDetected": {
+    "message": "Aucun média téléchargeable trouvé sur cette page."
+  },
+  "emptyHint": {
+    "message": "Lancez la lecture de la vidéo ou de l'audio, puis rouvrez ce panneau."
+  },
+  "btnDownload": {
+    "message": "Télécharger"
+  },
+  "btnSending": {
+    "message": "Envoi…"
+  },
+  "btnSent": {
+    "message": "Envoyé"
+  },
+  "btnOpen": {
+    "message": "Ouvrir NovaDownload"
+  },
+  "btnSettings": {
+    "message": "Réglages"
+  },
+  "btnRefresh": {
+    "message": "Réanalyser cette page"
+  },
+  "btnSendPage": {
+    "message": "Envoyer"
+  },
+  "btnClearCaptured": {
+    "message": "Vider la liste"
+  },
+  "pageLinkPlaceholder": {
+    "message": "https://exemple.fr/fichier.mp4"
+  },
+  "ctxSendLink": {
+    "message": "Envoyer le lien vers NovaDownload"
+  },
+  "ctxSendPage": {
+    "message": "Envoyer le lien de cette page vers NovaDownload"
+  },
+  "kindVideo": {
+    "message": "Vidéo"
+  },
+  "kindAudio": {
+    "message": "Audio"
+  },
+  "kindFile": {
+    "message": "Fichier"
+  },
+  "kindStream": {
+    "message": "Flux"
+  },
+  "sourceMediaElement": {
+    "message": "élément média de la page"
+  },
+  "sourceLink": {
+    "message": "lien direct"
+  },
+  "sourceNetwork": {
+    "message": "requête réseau"
+  },
+  "sourcePreload": {
+    "message": "indice de préchargement"
+  },
+  "sourceMeta": {
+    "message": "métadonnées de la page"
+  },
+  "sourceBrowserDownload": {
+    "message": "téléchargement du navigateur"
+  },
+  "unsupportedStream": {
+    "message": "Flux en liste de lecture (HLS/DASH) — NovaDownload télécharge des fichiers entiers, pas des flux segmentés."
+  },
+  "unsupportedBlob": {
+    "message": "URL de lecture générée par la page (blob:/MSE) — il n'y a aucun fichier direct à télécharger."
+  },
+  "unsupportedScheme": {
+    "message": "Seuls les liens http et https peuvent être envoyés."
+  },
+  "sentOk": {
+    "message": "« $name$ » ajouté à NovaDownload.",
+    "placeholders": {
+      "name": {
+        "content": "$1",
+        "example": "clip.mp4"
+      }
+    }
+  },
+  "sentDuplicate": {
+    "message": "Déjà présent dans la file NovaDownload."
+  },
+  "errorUnavailable": {
+    "message": "NovaDownload n'est pas lancé."
+  },
+  "errorUnavailableHint": {
+    "message": "Lancez NovaDownload, ou installez-le s'il est absent, puis réessayez."
+  },
+  "errorHostMissing": {
+    "message": "L'hôte de messagerie native NovaDownload n'est pas enregistré pour ce navigateur."
+  },
+  "errorHostMissingHint": {
+    "message": "Ouvrez NovaDownload → Réglages → Intégration navigateur → Enregistrer, puis rechargez cette extension."
+  },
+  "errorDisabled": {
+    "message": "L'intégration navigateur est désactivée dans les réglages de NovaDownload."
+  },
+  "errorTimeout": {
+    "message": "NovaDownload n'a pas répondu à temps."
+  },
+  "errorGeneric": {
+    "message": "La requête a échoué."
+  },
+  "errorInvalidLink": {
+    "message": "Saisissez un lien http ou https valide."
+  },
+  "errorNoTab": {
+    "message": "Aucune page active à analyser."
+  },
+  "optionsTitle": {
+    "message": "NovaDownload — réglages"
+  },
+  "optConnectionTitle": {
+    "message": "Connexion"
+  },
+  "optConnectionSubtitle": {
+    "message": "Comment l'extension joint l'application de bureau"
+  },
+  "optTestConnection": {
+    "message": "Tester la connexion"
+  },
+  "optRegisterTitle": {
+    "message": "Hôte de messagerie native"
+  },
+  "optRegisterBody": {
+    "message": "L'hôte est enregistré par l'installateur NovaDownload. Pour l'enregistrer à la main, exécutez :"
+  },
+  "optCopy": {
+    "message": "Copier"
+  },
+  "optCopied": {
+    "message": "Copié"
+  },
+  "optDetectionTitle": {
+    "message": "Détection"
+  },
+  "optDetectionSubtitle": {
+    "message": "Ce que l'extension est autorisée à consulter"
+  },
+  "optAutoCapture": {
+    "message": "Lister les médias téléchargés par le navigateur lui-même"
+  },
+  "optAutoCaptureHint": {
+    "message": "Observe vos téléchargements du navigateur et liste les médias directs dans le panneau. Rien n'est redirigé automatiquement."
+  },
+  "optDeepScan": {
+    "message": "Détection réseau approfondie (demande une permission supplémentaire)"
+  },
+  "optDeepScanHint": {
+    "message": "Observe les requêtes média sur tous les sites : les lecteurs qui n'exposent aucune URL dans la page peuvent ainsi être listés."
+  },
+  "optContextMenus": {
+    "message": "Ajouter « Envoyer vers NovaDownload » au menu contextuel"
+  },
+  "optAboutTitle": {
+    "message": "À propos"
+  },
+  "optExtensionId": {
+    "message": "Identifiant d'extension"
+  },
+  "optVersion": {
+    "message": "Version"
+  },
+  "optProtocol": {
+    "message": "Protocole"
+  },
+  "optDestination": {
+    "message": "Destination par défaut"
+  },
+  "optHostName": {
+    "message": "Nom de l'hôte de messagerie native"
+  },
+  "optPermissionDenied": {
+    "message": "La permission n'a pas été accordée."
+  }
+}

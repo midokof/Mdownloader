@@ -1,4 +1,33 @@
-<Project Sdk="Microsoft.NET.Sdk"><PropertyGroup><TargetFramework>net9.0-windows</TargetFramework><UseWPF>true</UseWPF><OutputType>WinExe</OutputType><Nullable>enable</Nullable><ImplicitUsings>enable</ImplicitUsings></PropertyGroup><ItemGroup><ProjectReference Include="..\NovaDownload.Core\NovaDownload.Core.csproj" /><ProjectReference Include="..\NovaDownload.Infrastructure\NovaDownload.Infrastructure.csproj" /><ProjectReference Include="..\NovaDownload.DownloadEngine\NovaDownload.DownloadEngine.csproj" /><ProjectReference Include="..\NovaDownload.BrowserIntegration\NovaDownload.BrowserIntegration.csproj" /></ItemGroup><ItemGroup>
-  <PackageReference Include="CommunityToolkit.Mvvm" Version="8.3.2" />
-  <PackageReference Include="Microsoft.Extensions.Hosting" Version="9.0.0" />
-</ItemGroup></Project>
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net9.0-windows</TargetFramework>
+    <UseWPF>true</UseWPF>
+    <OutputType>WinExe</OutputType>
+    <Nullable>enable</Nullable>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <RootNamespace>NovaDownload.App</RootNamespace>
+    <AssemblyName>NovaDownload.App</AssemblyName>
+    <ApplicationIcon>..\..\assets\novadownload.ico</ApplicationIcon>
+    <Product>NovaDownload</Product>
+    <AssemblyTitle>NovaDownload</AssemblyTitle>
+    <Description>Download manager with verified browser integration</Description>
+    <Version>1.0.0</Version>
+    <AssemblyVersion>1.0.0.0</AssemblyVersion>
+    <FileVersion>1.0.0.0</FileVersion>
+    <SatelliteResourceLanguages>en</SatelliteResourceLanguages>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\NovaDownload.Core\NovaDownload.Core.csproj" />
+    <ProjectReference Include="..\NovaDownload.Infrastructure\NovaDownload.Infrastructure.csproj" />
+    <ProjectReference Include="..\NovaDownload.DownloadEngine\NovaDownload.DownloadEngine.csproj" />
+    <ProjectReference Include="..\NovaDownload.BrowserIntegration\NovaDownload.BrowserIntegration.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="CommunityToolkit.Mvvm" Version="8.3.2" />
+    <PackageReference Include="Microsoft.Extensions.Hosting" Version="9.0.0" />
+  </ItemGroup>
+
+</Project>

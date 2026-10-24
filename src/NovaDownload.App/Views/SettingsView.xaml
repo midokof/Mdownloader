@@ -71,6 +71,43 @@
                 </StackPanel>
             </Border>
 
+            <!-- browser integration -->
+            <Border Style="{StaticResource Card}" Margin="0,0,0,16">
+                <StackPanel>
+                    <TextBlock Text="{loc:Tr Set_BrowserTitle}" Style="{StaticResource H2Text}"/>
+                    <TextBlock Text="{loc:Tr Set_BrowserSubtitle}" Style="{StaticResource CaptionText}" Margin="0,2,0,16"/>
+
+                    <CheckBox Style="{StaticResource ToggleCheck}" Content="{loc:Tr Set_BrowserEnable}"
+                              AutomationProperties.AutomationId="BrowserIntegrationToggle"
+                              AutomationProperties.Name="Enable browser integration"
+                              IsChecked="{Binding EnableBrowserIntegration}" Margin="0,0,0,12"/>
+                    <CheckBox Style="{StaticResource ToggleCheck}" Content="{loc:Tr Set_BrowserActivate}"
+                              AutomationProperties.AutomationId="BrowserActivateToggle"
+                              AutomationProperties.Name="Activate on browser download"
+                              IsChecked="{Binding ActivateOnBrowserDownload}"/>
+
+                    <TextBlock Text="{loc:Tr Set_BrowserStatusLabel}" Style="{StaticResource CaptionText}"
+                               FontWeight="SemiBold" Margin="0,18,0,6"/>
+                    <Grid>
+                        <StackPanel Margin="0,0,140,0">
+                            <TextBlock Text="{Binding BrowserStatusText}" Style="{StaticResource SecondaryText}"
+                                       TextWrapping="Wrap"
+                                       AutomationProperties.AutomationId="BrowserStatusText"/>
+                            <TextBlock Text="{Binding BrowserIdsText}" Style="{StaticResource CaptionText}"
+                                       TextWrapping="Wrap" Margin="0,3,0,0"/>
+                        </StackPanel>
+                        <Button Style="{StaticResource SecondaryButton}" Content="{loc:Tr Btn_RegisterBrowser}"
+                                AutomationProperties.AutomationId="RegisterBrowserIntegration"
+                                AutomationProperties.Name="Register browser integration"
+                                Command="{Binding RegisterBrowserIntegrationCommand}"
+                                HorizontalAlignment="Right" VerticalAlignment="Center" Padding="14,8"/>
+                    </Grid>
+                    <TextBlock Text="{Binding BrowserMessage}" Style="{StaticResource CaptionText}"
+                               TextWrapping="Wrap" Margin="0,10,0,0"
+                               AutomationProperties.AutomationId="BrowserMessage"/>
+                </StackPanel>
+            </Border>
+
             <!-- appearance -->
             <Border Style="{StaticResource Card}" Margin="0,0,0,16">
                 <StackPanel>

@@ -130,6 +130,22 @@ internal static partial class LocaleCatalog
         ["Btn_Save"] = "Save changes",
         ["Set_Saved"] = "Saved — concurrency applies on next launch.",
 
+        // ---- browser integration ----------------------------------------------
+        ["Set_BrowserTitle"] = "Browser integration",
+        ["Set_BrowserSubtitle"] = "Send downloads straight from Chrome, Edge and Firefox to this queue.",
+        ["Set_BrowserEnable"] = "Accept downloads sent by the browser extensions",
+        ["Set_BrowserActivate"] = "Bring NovaDownload to the front when a download arrives",
+        ["Set_BrowserStatusLabel"] = "STATUS",
+        ["Set_BrowserStatusReady"] = "{0} · desktop link active",
+        ["Set_BrowserStatusIdle"] = "{0} · desktop link stopped",
+        ["Set_BrowserRegisteredFor"] = "registered for {0}",
+        ["Set_BrowserNone"] = "not registered for any browser yet",
+        ["Set_BrowserHostMissing"] = "native messaging host not found next to NovaDownload — reinstall or rebuild the browser integration",
+        ["Set_BrowserIds"] = "Extension id {0} (Chrome/Edge) · {1} (Firefox)",
+        ["Btn_RegisterBrowser"] = "Register",
+        ["Set_BrowserRegistered"] = "Browser integration registered for {0}.",
+        ["Set_BrowserRegistrationFailed"] = "Registration failed: {0}",
+
         // ---- status ------------------------------------------------------------
         ["Status_Queued"] = "Queued",
         ["Status_Downloading"] = "Downloading",

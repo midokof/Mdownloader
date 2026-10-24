@@ -1,0 +1,10 @@
+body { background: var(--nova-surface-sunken); }
+main { max-width: 640px; margin: 0 auto; padding: 0 0 40px; }
+.card { background: var(--nova-surface); border: 1px solid var(--nova-border); border-radius: var(--nova-radius); margin: 14px; padding: 16px; }
+.card .section-title { font-size: 12px; letter-spacing: .06em; }
+.banner-host:not(:empty) { margin: 14px 14px 0; }
+.banner-host:not(:empty) + .card { margin-top: 14px; }
+.kv { display: flex; flex-direction: column; gap: 7px; margin: 12px 0 14px; }
+.kv > div { display: flex; align-items: baseline; gap: 10px; font-size: 12px; }
+.kv span { flex: none; width: 190px; color: var(--nova-text-muted); }
+.kv code { flex: 1; min-width: 0; }

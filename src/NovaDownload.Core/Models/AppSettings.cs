@@ -14,7 +14,10 @@ public class AppSettings
     /// <summary>"Auto" follows the Windows display language; "en" / "fr" pin one.</summary>
     public string Language { get; set; } = "Auto";
 
-    public bool EnableBrowserIntegration { get; set; }
+    public bool EnableBrowserIntegration { get; set; } = true;
+
+    /// <summary>Restore and focus the window when a browser hands a download to NovaDownload.</summary>
+    public bool ActivateOnBrowserDownload { get; set; } = true;
 
     public bool NotifyOnComplete { get; set; } = true;
 

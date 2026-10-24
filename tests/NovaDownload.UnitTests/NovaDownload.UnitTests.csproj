@@ -1,7 +1,8 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <TargetFramework>net9.0</TargetFramework>
+    <!-- net9.0-windows: the browser integration assembly is Windows-only (named pipes, registry). -->
+    <TargetFramework>net9.0-windows</TargetFramework>
     <ImplicitUsings>enable</ImplicitUsings>
     <Nullable>enable</Nullable>
     <IsPackable>false</IsPackable>
@@ -27,6 +28,8 @@
   <ItemGroup>
     <ProjectReference Include="..\..\src\NovaDownload.Core\NovaDownload.Core.csproj" />
     <ProjectReference Include="..\..\src\NovaDownload.DownloadEngine\NovaDownload.DownloadEngine.csproj" />
+    <ProjectReference Include="..\..\src\NovaDownload.Infrastructure\NovaDownload.Infrastructure.csproj" />
+    <ProjectReference Include="..\..\src\NovaDownload.BrowserIntegration\NovaDownload.BrowserIntegration.csproj" />
   </ItemGroup>
 
 </Project>

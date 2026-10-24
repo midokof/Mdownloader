@@ -1,0 +1,103 @@
+using NovaDownload.BrowserIntegration;
+using NovaDownload.BrowserIntegration.Models;
+using NovaDownload.BrowserIntegration.Protocol;
+using NovaDownload.BrowserIntegration.Validation;
+
+namespace NovaDownload.App.Services;
+
+/// <summary>
+/// A download handed to the application through a command line argument — either the
+/// <c>novadownload://</c> protocol fallback or an explicit <c>--url</c> switch.
+/// </summary>
+public sealed record StartupRequest(string Url, string? FileName, string? Directory, string Source)
+{
+    /// <summary>Parses the command line. Returns null when there is nothing to download.</summary>
+    public static StartupRequest? Parse(string[] args)
+    {
+        for (var i = 0; i < args.Length; i++)
+        {
+            var arg = args[i];
+
+            if (arg is "--url" or "-u" && i + 1 < args.Length)
+                return FromPlainUrl(args[i + 1], "command line --url");
+
+            if (arg.StartsWith("--url=", StringComparison.OrdinalIgnoreCase))
+                return FromPlainUrl(arg[6..], "command line --url");
+
+            if (arg.StartsWith($"{BrowserIntegrationInfo.UrlProtocol}://", StringComparison.OrdinalIgnoreCase))
+                return FromProtocolUrl(arg);
+        }
+
+        return null;
+    }
+
+    private static StartupRequest? FromPlainUrl(string url, string source) =>
+        string.IsNullOrWhiteSpace(url) ? null : new StartupRequest(url.Trim(), null, null, source);
+
+    /// <summary>
+    /// <c>novadownload://download?url=...&amp;filename=...&amp;directory=...</c> or the path form
+    /// <c>novadownload://download/&lt;encoded url&gt;</c>.
+    /// </summary>
+    public static StartupRequest? FromProtocolUrl(string protocolUrl)
+    {
+        if (!Uri.TryCreate(protocolUrl, UriKind.Absolute, out var uri)) return null;
+        if (!string.Equals(uri.Scheme, BrowserIntegrationInfo.UrlProtocol, StringComparison.OrdinalIgnoreCase)) return null;
+
+        var action = uri.Host.ToLowerInvariant();
+        if (action is not ("download" or "open")) return null;
+
+        string? url = null;
+        string? fileName = null;
+        string? directory = null;
+
+        foreach (var pair in uri.Query.TrimStart('?').Split('&', StringSplitOptions.RemoveEmptyEntries))
+        {
+            var index = pair.IndexOf('=');
+            if (index <= 0) continue;
+            var name = pair[..index].ToLowerInvariant();
+            var value = Uri.UnescapeDataString(pair[(index + 1)..]);
+            switch (name)
+            {
+                case "url": url = value; break;
+                case "filename": fileName = value; break;
+                case "directory": directory = value; break;
+            }
+        }
+
+        if (url is null && action == "download" && uri.AbsolutePath.Length > 1)
+            url = Uri.UnescapeDataString(uri.AbsolutePath.TrimStart('/'));
+
+        if (string.IsNullOrWhiteSpace(url)) return null;
+        return new StartupRequest(url.Trim(), fileName, directory, "novadownload:// protocol");
+    }
+
+    public BrowserRequest ToBrowserRequest() => new()
+    {
+        Action = BrowserActions.Download,
+        Url = Url,
+        FileName = FileName,
+        Directory = Directory,
+        Browser = "url-protocol",
+        ExtensionVersion = "1.0.0",
+        RequestId = $"protocol:{Guid.NewGuid():n}"
+    };
+
+    /// <summary>
+    /// Hands the request to an already running instance. Returns true when that instance answered,
+    /// in which case this process must exit without opening a second window.
+    /// </summary>
+    public async Task<(bool Forwarded, BrowserResponse? Response)> TryForwardAsync(CancellationToken cancellationToken = default)
+    {
+        if (!await BrowserBridgeProtocol.IsServerAvailableAsync(timeout: TimeSpan.FromMilliseconds(600), cancellationToken: cancellationToken)
+                .ConfigureAwait(false))
+            return (false, null);
+
+        var response = await BrowserBridgeProtocol
+            .SendRequestAsync(ToBrowserRequest(), connectTimeout: TimeSpan.FromSeconds(2), cancellationToken: cancellationToken)
+            .ConfigureAwait(false);
+        return (true, response);
+    }
+
+    /// <summary>Human-readable validation of the URL, used before queueing.</summary>
+    public bool IsValid => DownloadRequestValidator.Validate(ToBrowserRequest()).IsValid;
+}
