@@ -1,0 +1,4 @@
+<Project Sdk="Microsoft.NET.Sdk"><PropertyGroup><TargetFramework>net9.0-windows</TargetFramework><UseWPF>true</UseWPF><OutputType>WinExe</OutputType><Nullable>enable</Nullable><ImplicitUsings>enable</ImplicitUsings></PropertyGroup><ItemGroup><ProjectReference Include="..\NovaDownload.Core\NovaDownload.Core.csproj" /><ProjectReference Include="..\NovaDownload.Infrastructure\NovaDownload.Infrastructure.csproj" /><ProjectReference Include="..\NovaDownload.DownloadEngine\NovaDownload.DownloadEngine.csproj" /><ProjectReference Include="..\NovaDownload.BrowserIntegration\NovaDownload.BrowserIntegration.csproj" /></ItemGroup><ItemGroup>
+  <PackageReference Include="CommunityToolkit.Mvvm" Version="8.3.2" />
+  <PackageReference Include="Microsoft.Extensions.Hosting" Version="9.0.0" />
+</ItemGroup></Project>
