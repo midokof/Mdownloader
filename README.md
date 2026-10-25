@@ -24,6 +24,16 @@ Feel free to open issues or submit pull requests. Code is under the MIT license.
 
 ---
 
+## Binaries
+
+A prebuilt Windows x64 executable is available at:
+
+- [`dist/NovaDownload-1.0.0-win-x64.exe`](dist/NovaDownload-1.0.0-win-x64.exe)
+
+This executable is framework-dependent and requires **.NET 9 Desktop Runtime (x64)**.
+
+See [`dist/README.md`](dist/README.md) for run instructions.
+
 View the full docs under `docs/`.
 
 ## Screenshot

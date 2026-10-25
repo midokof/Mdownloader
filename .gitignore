@@ -7,6 +7,12 @@ build/
 *.user
 *.suo
 .vs/
+*.pdb
+
+# Publish scratch output; only curated release files under dist/ are tracked
+dist/win-x64/
+dist/win-x64-single/
+dist/win-x64-framework/
 
 # Local artifacts
 docs/screenshots/*.tmp
