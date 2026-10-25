@@ -1,0 +1,86 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="960" height="560" viewBox="0 0 960 560" role="img" aria-label="Mdownloader main UI screenshot">
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#0f1115"/>
+      <stop offset="100%" stop-color="#171a21"/>
+    </linearGradient>
+    <linearGradient id="row" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#1e222b"/>
+      <stop offset="100%" stop-color="#191d25"/>
+    </linearGradient>
+    <linearGradient id="bar" x1="0" y1="0" x2="1" y2="0">
+      <stop offset="0%" stop-color="#3b82f6"/>
+      <stop offset="100%" stop-color="#22c55e"/>
+    </linearGradient>
+  </defs>
+
+  <rect width="960" height="560" fill="url(#bg)"/>
+
+  <!-- window chrome -->
+  <rect x="16" y="16" width="928" height="528" rx="16" fill="#14171d" stroke="#242a34"/>
+  <circle cx="48" cy="48" r="6" fill="#ef4444"/>
+  <circle cx="70" cy="48" r="6" fill="#f59e0b"/>
+  <circle cx="92" cy="48" r="6" fill="#22c55e"/>
+  <text x="122" y="53" font-family="Segoe UI, Arial, sans-serif" font-size="14" fill="#9ca3af">Mdownloader — Downloads</text>
+
+  <!-- header row -->
+  <rect x="32" y="76" width="896" height="36" rx="8" fill="#1b1f27"/>
+  <text x="48" y="99" font-family="Segoe UI, Arial, sans-serif" font-size="13" fill="#e5e7eb">UBUNTU-24.04.3-DESKTOP-AMD64.ISO</text>
+  <text x="470" y="99" font-family="Segoe UI, Arial, sans-serif" font-size="13" fill="#9ca3af">5.83 GB</text>
+  <text x="610" y="99" font-family="Segoe UI, Arial, sans-serif" font-size="13" fill="#9ca3af">18.4 MB/s</text>
+  <text x="760" y="99" font-family="Segoe UI, Arial, sans-serif" font-size="13" fill="#22c55e">Downloading</text>
+  <text x="880" y="99" font-family="Segoe UI, Arial, sans-serif" font-size="13" fill="#9ca3af">67%</text>
+
+  <!-- progress row -->
+  <rect x="32" y="124" width="896" height="14" rx="7" fill="#222732"/>
+  <rect x="32" y="124" width="600" height="14" rx="7" fill="url(#bar)"/>
+
+  <!-- torrent file selection panel -->
+  <rect x="32" y="158" width="896" height="212" rx="10" fill="#161a21" stroke="#232a34"/>
+  <text x="50" y="182" font-family="Segoe UI, Arial, sans-serif" font-size="14" fill="#f3f4f6">Choose files from this torrent</text>
+  <text x="50" y="202" font-family="Segoe UI, Arial, sans-serif" font-size="12" fill="#7d8798">Select what you want before starting the transfer.</text>
+
+  <!-- file list headers -->
+  <text x="50" y="232" font-family="Segoe UI, Arial, sans-serif" font-size="12" fill="#6b7280">FILE</text>
+  <text x="520" y="232" font-family="Segoe UI, Arial, sans-serif" font-size="12" fill="#6b7280">SIZE</text>
+  <text x="700" y="232" font-family="Segoe UI, Arial, sans-serif" font-size="12" fill="#6b7280">ACTION</text>
+
+  <!-- rows -->
+  <g font-family="Segoe UI, Arial, sans-serif" font-size="13">
+    <rect x="44" y="242" width="872" height="26" rx="6" fill="url(#row)"/>
+    <rect x="52" y="248" width="12" height="12" rx="3" fill="#22c55e" stroke="#16a34a"/>
+    <path d="M54 254l3 3 5-6" stroke="#0f1115" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
+    <text x="76" y="259" fill="#e5e7eb">ubuntu-24.04.3-desktop-amd64.iso</text>
+    <text x="520" y="259" fill="#9ca3af">5.83 GB</text>
+    <text x="700" y="259" fill="#3b82f6">Download</text>
+
+    <rect x="44" y="272" width="872" height="26" rx="6" fill="url(#row)"/>
+    <rect x="52" y="278" width="12" height="12" rx="3" fill="#22c55e" stroke="#16a34a"/>
+    <path d="M54 284l3 3 5-6" stroke="#0f1115" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
+    <text x="76" y="289" fill="#e5e7eb">movies/Blade.Runner.2049.1080p.mkv</text>
+    <text x="520" y="289" fill="#9ca3af">2.40 GB</text>
+    <text x="700" y="289" fill="#3b82f6">Download</text>
+
+    <rect x="44" y="302" width="872" height="26" rx="6" fill="url(#row)"/>
+    <rect x="52" y="308" width="12" height="12" rx="3" fill="#22c55e" stroke="#16a34a"/>
+    <path d="M54 314l3 3 5-6" stroke="#0f1115" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
+    <text x="76" y="319" fill="#e5e7eb">music/Nightcall.mp3</text>
+    <text x="520" y="319" fill="#9ca3af">8.60 MB</text>
+    <text x="700" y="319" fill="#3b82f6">Download</text>
+
+    <rect x="44" y="332" width="872" height="26" rx="6" fill="url(#row)"/>
+    <rect x="52" y="338" width="12" height="12" rx="3" fill="#232a34" stroke="#374151"/>
+    <text x="76" y="349" fill="#6b7280">extras/readme-bonus.txt</text>
+    <text x="520" y="349" fill="#6b7280">14 KB</text>
+    <text x="700" y="349" fill="#4b5563">Skip</text>
+  </g>
+
+  <!-- footer buttons -->
+  <rect x="44" y="508" width="120" height="24" rx="6" fill="#374151"/>
+  <text x="78" y="525" font-family="Segoe UI, Arial, sans-serif" font-size="12" fill="#d1d5db">Cancel</text>
+  <rect x="176" y="508" width="170" height="24" rx="6" fill="#22c55e"/>
+  <text x="200" y="525" font-family="Segoe UI, Arial, sans-serif" font-size="12" fill="#06210f">Start selection</text>
+
+  <!-- status bar -->
+  <text x="44" y="392" font-family="Segoe UI, Arial, sans-serif" font-size="12" fill="#7d8798">Seeds 18 · Leechers 42 · Connected 61 · Ratio 1.24 · ETA 00:05:12</text>
+</svg>

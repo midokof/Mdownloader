@@ -1,6 +1,10 @@
 # Mdownloader
 
-Mdownloader is a multi‑file torrent and HTTP downloader built on MonoTorrent and .NET. It supports:
+**Mdownloader** is a multi‑file torrent and HTTP downloader for Windows. It lets you paste a magnet link or `.torrent` file, choose exactly which files you want from a multi‑file torrent, then download only those files from the swarm. It also supports standard HTTP/HTTPS downloads, plus pause/resume/cancel, queue monitoring, configurable engine limits, and Windows magnet-link integration.
+
+GitHub description you can paste into **About**:
+
+> Multi‑file torrent & HTTP downloader with per‑file selection, magnet links, and live swarm telemetry
 
 - Downloading torrent and magnet links.
 - Selecting specific files within multi‑file torrents.
@@ -21,3 +25,9 @@ Feel free to open issues or submit pull requests. Code is under the MIT license.
 ---
 
 View the full docs under `docs/`.
+
+## Screenshot
+
+![Mdownloader main UI](docs/screenshots/main-ui.svg)
+
+---
