@@ -108,6 +108,100 @@
                 </StackPanel>
             </Border>
 
+            <!-- bittorrent -->
+            <Border Style="{StaticResource Card}" Margin="0,0,0,16">
+                <StackPanel>
+                    <TextBlock Text="{loc:Tr Set_TorrentTitle}" Style="{StaticResource H2Text}"/>
+                    <TextBlock Text="{loc:Tr Set_TorrentSubtitle}" Style="{StaticResource CaptionText}" Margin="0,2,0,16"/>
+
+                    <Grid>
+                        <StackPanel Margin="0,0,150,0">
+                            <TextBlock Text="{loc:Tr Set_TorrentPort}" Style="{StaticResource CaptionText}" FontWeight="SemiBold"/>
+                            <TextBlock Text="{loc:Tr Set_TorrentPortHint}" Style="{StaticResource CaptionText}"
+                                       TextWrapping="Wrap" Margin="0,3,0,0"/>
+                        </StackPanel>
+                        <Border Style="{StaticResource InputFrame}" HorizontalAlignment="Right" Width="140" VerticalAlignment="Top">
+                            <TextBox Style="{StaticResource InputBox}"
+                                     AutomationProperties.AutomationId="TorrentListenPort"
+                                     AutomationProperties.Name="Torrent listen port"
+                                     Text="{Binding TorrentListenPort, UpdateSourceTrigger=PropertyChanged}"/>
+                        </Border>
+                    </Grid>
+
+                    <CheckBox Style="{StaticResource ToggleCheck}" Content="{loc:Tr Set_TorrentDht}"
+                              AutomationProperties.AutomationId="TorrentDhtToggle"
+                              IsChecked="{Binding TorrentEnableDht}" Margin="0,18,0,0"/>
+                    <CheckBox Style="{StaticResource ToggleCheck}" Content="{loc:Tr Set_TorrentPex}"
+                              AutomationProperties.AutomationId="TorrentPexToggle"
+                              IsChecked="{Binding TorrentEnablePex}" Margin="0,12,0,0"/>
+                    <CheckBox Style="{StaticResource ToggleCheck}" Content="{loc:Tr Set_TorrentLpd}"
+                              AutomationProperties.AutomationId="TorrentLpdToggle"
+                              IsChecked="{Binding TorrentEnableLpd}" Margin="0,12,0,0"/>
+                    <CheckBox Style="{StaticResource ToggleCheck}" Content="{loc:Tr Set_TorrentForward}"
+                              AutomationProperties.AutomationId="TorrentForwardToggle"
+                              IsChecked="{Binding TorrentEnablePortForwarding}" Margin="0,12,0,0"/>
+                    <CheckBox Style="{StaticResource ToggleCheck}" Content="{loc:Tr Set_TorrentSeed}"
+                              AutomationProperties.AutomationId="TorrentSeedToggle"
+                              IsChecked="{Binding TorrentSeedAfterCompletion}" Margin="0,12,0,0"/>
+                    <CheckBox Style="{StaticResource ToggleCheck}" Content="{loc:Tr Set_TorrentMagnet}"
+                              AutomationProperties.AutomationId="TorrentMagnetToggle"
+                              IsChecked="{Binding TorrentHandleMagnetLinks}" Margin="0,12,0,0"/>
+                    <TextBlock Text="{loc:Tr Set_TorrentMagnetHint}" Style="{StaticResource CaptionText}"
+                               TextWrapping="Wrap" Margin="0,4,0,0"/>
+
+                    <TextBlock Text="{loc:Tr Set_TorrentLimits}" Style="{StaticResource CaptionText}"
+                               FontWeight="SemiBold" Margin="0,20,0,8"/>
+                    <Grid>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="*"/>
+                            <ColumnDefinition Width="*"/>
+                        </Grid.ColumnDefinitions>
+                        <StackPanel Margin="0,0,8,0">
+                            <TextBlock Text="{loc:Tr Set_TorrentUploadLimit}" Style="{StaticResource CaptionText}"/>
+                            <Border Style="{StaticResource InputFrame}" Margin="0,6,0,0">
+                                <TextBox Style="{StaticResource InputBox}"
+                                         AutomationProperties.AutomationId="TorrentUploadLimit"
+                                         Text="{Binding TorrentMaxUploadKib, UpdateSourceTrigger=PropertyChanged}"/>
+                            </Border>
+                        </StackPanel>
+                        <StackPanel Grid.Column="1" Margin="8,0,0,0">
+                            <TextBlock Text="{loc:Tr Set_TorrentDownloadLimit}" Style="{StaticResource CaptionText}"/>
+                            <Border Style="{StaticResource InputFrame}" Margin="0,6,0,0">
+                                <TextBox Style="{StaticResource InputBox}"
+                                         AutomationProperties.AutomationId="TorrentDownloadLimit"
+                                         Text="{Binding TorrentMaxDownloadKib, UpdateSourceTrigger=PropertyChanged}"/>
+                            </Border>
+                        </StackPanel>
+                    </Grid>
+
+                    <Grid Margin="0,14,0,0">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="*"/>
+                            <ColumnDefinition Width="*"/>
+                        </Grid.ColumnDefinitions>
+                        <StackPanel Margin="0,0,8,0">
+                            <TextBlock Text="{loc:Tr Set_TorrentConnections}" Style="{StaticResource CaptionText}"/>
+                            <Border Style="{StaticResource InputFrame}" Margin="0,6,0,0">
+                                <TextBox Style="{StaticResource InputBox}"
+                                         AutomationProperties.AutomationId="TorrentConnectionsPerTorrent"
+                                         Text="{Binding TorrentConnectionsPerTorrent, UpdateSourceTrigger=PropertyChanged}"/>
+                            </Border>
+                        </StackPanel>
+                        <StackPanel Grid.Column="1" Margin="8,0,0,0">
+                            <TextBlock Text="{loc:Tr Set_TorrentConnectionsTotal}" Style="{StaticResource CaptionText}"/>
+                            <Border Style="{StaticResource InputFrame}" Margin="0,6,0,0">
+                                <TextBox Style="{StaticResource InputBox}"
+                                         AutomationProperties.AutomationId="TorrentConnectionsTotal"
+                                         Text="{Binding TorrentMaxConnections, UpdateSourceTrigger=PropertyChanged}"/>
+                            </Border>
+                        </StackPanel>
+                    </Grid>
+
+                    <TextBlock Text="{loc:Tr Set_TorrentApplied}" Style="{StaticResource CaptionText}"
+                               TextWrapping="Wrap" Margin="0,12,0,0"/>
+                </StackPanel>
+            </Border>
+
             <!-- appearance -->
             <Border Style="{StaticResource Card}" Margin="0,0,0,16">
                 <StackPanel>

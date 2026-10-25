@@ -109,7 +109,8 @@
                             <Grid>
                                 <TextBlock Text="{Binding FileName}" FontSize="13.5" FontWeight="SemiBold"
                                            Foreground="{DynamicResource TextPrimaryBrush}"
-                                           TextTrimming="CharacterEllipsis" Margin="0,0,90,0"/>
+                                           TextTrimming="CharacterEllipsis" Margin="0,0,90,0"
+                                           ToolTip="{Binding DetailText}"/>
                                 <Border CornerRadius="6" Padding="7,2" HorizontalAlignment="Right"
                                         Background="{Binding Status, Converter={StaticResource StatusToBrush}, ConverterParameter=bg}">
                                     <TextBlock Text="{Binding StatusText}" FontSize="10" FontWeight="SemiBold"
@@ -125,17 +126,21 @@
                                 <Grid.ColumnDefinitions>
                                     <ColumnDefinition Width="*"/>
                                     <ColumnDefinition Width="Auto"/>
+                                    <ColumnDefinition Width="Auto"/>
                                 </Grid.ColumnDefinitions>
                                 <ProgressBar Style="{StaticResource ThinProgress}" Maximum="100"
                                              Value="{Binding ProgressPercent, Mode=OneWay}" Height="6"
                                              VerticalAlignment="Center"/>
-                                <TextBlock Grid.Column="1" Text="{Binding ProgressText}" Style="{StaticResource CaptionText}"
-                                           Margin="12,0,0,0" VerticalAlignment="Center"/>
+                                <TextBlock Grid.Column="1" Text="{Binding ProgressPercentText}" Margin="12,0,0,0"
+                                           FontSize="11.5" FontWeight="SemiBold" VerticalAlignment="Center"
+                                           Foreground="{Binding Status, Converter={StaticResource StatusToBrush}}"/>
+                                <TextBlock Grid.Column="2" Text="{Binding ProgressText}" Style="{StaticResource CaptionText}"
+                                           Margin="8,0,0,0" VerticalAlignment="Center"/>
                             </Grid>
                         </StackPanel>
 
                         <!-- telemetry -->
-                        <StackPanel Grid.Column="2" VerticalAlignment="Center">
+                        <StackPanel Grid.Column="2" VerticalAlignment="Center" ToolTip="{Binding DetailText}">
                             <TextBlock Text="{Binding MetricPrimary}" FontSize="13" FontWeight="SemiBold"
                                        Foreground="{DynamicResource TextPrimaryBrush}"
                                        HorizontalAlignment="Right"/>
@@ -149,7 +154,7 @@
                             <Button Style="{StaticResource IconButton}" ToolTip="{loc:Tr Tooltip_Pause}" AutomationProperties.Name="Pause"
                                     Command="{Binding DataContext.PauseCommand, RelativeSource={RelativeSource AncestorType=ListBox}}"
                                     CommandParameter="{Binding}"
-                                    Visibility="{Binding IsRunning, Converter={StaticResource BoolToVis}}">
+                                    Visibility="{Binding CanPause, Converter={StaticResource BoolToVis}}">
                                 <Path Data="{StaticResource IconPause}" Width="11" Height="11" Stretch="Uniform"
                                       Fill="{DynamicResource TextSecondaryBrush}"/>
                             </Button>

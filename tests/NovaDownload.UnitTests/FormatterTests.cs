@@ -62,6 +62,40 @@ public class DownloadItemTests
     }
 
     [Fact]
+    public void Swarm_Counters_Follow_Each_Language_Number_Rule()
+    {
+        var item = new DownloadItem { Kind = TransferKind.Torrent, Seeds = 1, Leechers = 0 };
+        Assert.Equal("1 seed · 0 peers", item.MetricSecondary);
+
+        Localizer.Apply("fr");
+        item.RefreshLocalizedText();
+        Assert.Equal("1 source · 0 pair", item.MetricSecondary);
+
+        item.Seeds = 3;
+        item.Leechers = 2;
+        Assert.Equal("3 sources · 2 pairs", item.MetricSecondary);
+    }
+
+    [Fact]
+    public void ProgressPercentText_Is_A_Localized_Percentage()
+    {
+        var item = new DownloadItem { FileSize = 1000, ProgressBytes = 425 };
+        Assert.Equal("43%", item.ProgressPercentText);
+
+        Localizer.Apply("fr");
+        item.RefreshLocalizedText();
+        Assert.Equal("43 %", item.ProgressPercentText);
+
+        // Unknown size has no percentage to show until the transfer reports one.
+        Localizer.Apply("en");
+        var unknown = new DownloadItem { ProgressBytes = 500 };
+        Assert.Equal(string.Empty, unknown.ProgressPercentText);
+
+        unknown.Status = DownloadStatus.Completed;
+        Assert.Equal("100%", unknown.ProgressPercentText);
+    }
+
+    [Fact]
     public void Extension_And_Folder_Are_Derived_From_Path()
     {
         var item = new DownloadItem

@@ -2,15 +2,20 @@ using NovaDownload.BrowserIntegration;
 using NovaDownload.BrowserIntegration.Models;
 using NovaDownload.BrowserIntegration.Protocol;
 using NovaDownload.BrowserIntegration.Validation;
+using NovaDownload.Core.Common;
 
 namespace NovaDownload.App.Services;
 
 /// <summary>
-/// A download handed to the application through a command line argument — either the
-/// <c>novadownload://</c> protocol fallback or an explicit <c>--url</c> switch.
+/// A download handed to the application from outside: the <c>novadownload://</c> protocol, the
+/// <c>magnet:</c> protocol, a <c>.torrent</c> path or an explicit <c>--url</c> / <c>--torrent</c>
+/// switch. Torrent sources are routed to the BitTorrent engine, everything else to the HTTP one.
 /// </summary>
 public sealed record StartupRequest(string Url, string? FileName, string? Directory, string Source)
 {
+    /// <summary>True when the source belongs to the swarm engine rather than the HTTP engine.</summary>
+    public bool IsTorrent => TorrentSourceRules.IsTorrent(Url);
+
     /// <summary>Parses the command line. Returns null when there is nothing to download.</summary>
     public static StartupRequest? Parse(string[] args)
     {
@@ -24,8 +29,21 @@ public sealed record StartupRequest(string Url, string? FileName, string? Direct
             if (arg.StartsWith("--url=", StringComparison.OrdinalIgnoreCase))
                 return FromPlainUrl(arg[6..], "command line --url");
 
+            if (arg is "--torrent" or "-t" && i + 1 < args.Length)
+                return FromTorrentSource(args[i + 1], "command line --torrent");
+
+            if (arg.StartsWith("--torrent=", StringComparison.OrdinalIgnoreCase))
+                return FromTorrentSource(arg[10..], "command line --torrent");
+
             if (arg.StartsWith($"{BrowserIntegrationInfo.UrlProtocol}://", StringComparison.OrdinalIgnoreCase))
                 return FromProtocolUrl(arg);
+
+            // A magnet link reaches the process bare when Windows hands over a magnet: click.
+            if (TorrentSourceRules.IsMagnet(arg))
+                return FromTorrentSource(arg, "magnet: protocol");
+
+            if (arg.EndsWith(".torrent", StringComparison.OrdinalIgnoreCase))
+                return FromTorrentSource(arg, "command line .torrent");
         }
 
         return null;
@@ -33,6 +51,17 @@ public sealed record StartupRequest(string Url, string? FileName, string? Direct
 
     private static StartupRequest? FromPlainUrl(string url, string source) =>
         string.IsNullOrWhiteSpace(url) ? null : new StartupRequest(url.Trim(), null, null, source);
+
+    private static StartupRequest? FromTorrentSource(string source, string origin)
+    {
+        if (string.IsNullOrWhiteSpace(source)) return null;
+
+        // Rejects a magnet without an info hash and a .torrent path that does not exist before the
+        // window is even created.
+        if (!TorrentSourceRules.TryNormalize(source, out var normalized, out _)) return null;
+
+        return new StartupRequest(normalized, null, null, origin);
+    }
 
     /// <summary>
     /// <c>novadownload://download?url=...&amp;filename=...&amp;directory=...</c> or the path form
@@ -71,16 +100,21 @@ public sealed record StartupRequest(string Url, string? FileName, string? Direct
         return new StartupRequest(url.Trim(), fileName, directory, "novadownload:// protocol");
     }
 
-    public BrowserRequest ToBrowserRequest() => new()
+    public BrowserRequest ToBrowserRequest()
     {
-        Action = BrowserActions.Download,
-        Url = Url,
-        FileName = FileName,
-        Directory = Directory,
-        Browser = "url-protocol",
-        ExtensionVersion = "1.0.0",
-        RequestId = $"protocol:{Guid.NewGuid():n}"
-    };
+        var torrent = IsTorrent;
+        return new BrowserRequest
+        {
+            Action = torrent ? BrowserActions.Torrent : BrowserActions.Download,
+            Url = Url,
+            // A torrent names its own files once the metadata arrives; a hint would fight the swarm.
+            FileName = torrent ? null : FileName,
+            Directory = Directory,
+            Browser = torrent ? "magnet-protocol" : "url-protocol",
+            ExtensionVersion = "1.0.0",
+            RequestId = $"protocol:{Guid.NewGuid():n}"
+        };
+    }
 
     /// <summary>
     /// Hands the request to an already running instance. Returns true when that instance answered,

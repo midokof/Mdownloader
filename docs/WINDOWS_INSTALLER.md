@@ -53,8 +53,8 @@ Output layout:
 
 ```
 release\
-  windows-installer\NovaDownload-1.0.0-win-x64-setup.exe     (~43 MB)
-  portable\NovaDownload-1.0.0-portable-win-x64.zip           (~57 MB)
+  windows-installer\NovaDownload-1.0.0-win-x64-setup.exe     (~46 MB)
+  portable\NovaDownload-1.0.0-portable-win-x64.zip           (~61 MB)
   chrome-extension\        chrome-extension.zip
   edge-extension\          edge-extension.zip
   firefox-extension\       firefox-extension.zip
@@ -100,8 +100,8 @@ The wizard offers a choice (all users / current user) via
 
 | Mode | Folder | Registry | Needs admin |
 | --- | --- | --- | --- |
-| All users (default) | `C:\Program Files\NovaDownload` | HKLM + HKCR | yes |
-| Current user (`/CURRENTUSER`) | `%LOCALAPPDATA%\Programs\NovaDownload` | HKCU | no |
+| All users (default) | `C:\Program Files\NovaDownload` | HKLM (files) + HKCU (protocol + host) | yes |
+| Current user (`/CURRENTUSER`) | `%LOCALAPPDATA%\Programs\NovaDownload` | HKCU (protocol + host) | no |
 
 Silent and per-user examples:
 
@@ -127,13 +127,24 @@ folder. The installer also offers a post-install entry that opens that folder.
 ### Registry
 
 ```
-HKCR\novadownload                      -> "URL:NovaDownload Protocol", "URL Protocol"
-HKCR\novadownload\DefaultIcon          -> "<install folder>\NovaDownload.App.exe,0"
-HKCR\novadownload\shell\open\command   -> "<install folder>\NovaDownload.App.exe" "%1"
+HKCU\Software\Classes\novadownload                      -> "URL:NovaDownload Protocol", "URL Protocol"
+HKCU\Software\Classes\novadownload\DefaultIcon          -> "<install folder>\NovaDownload.App.exe,0"
+HKCU\Software\Classes\novadownload\shell\open\command   -> "<install folder>\NovaDownload.App.exe" "%1"
+
+HKCU\Software\Classes\magnet                            -> "URL:NovaDownload magnet handler", "URL Protocol"
+HKCU\Software\Classes\magnet\DefaultIcon                -> "<install folder>\NovaDownload.App.exe,0"
+HKCU\Software\Classes\magnet\shell\open\command         -> "<install folder>\NovaDownload.App.exe" "%1"
 ```
 
-In per-user mode `HKCR` maps to `HKCU\Software\Classes`, so no admin rights are needed. All four
-values are removed on uninstall (`uninsdeletekey` / `uninsdeletevalue`).
+The integration keys are written per user (`Root: HKCU` plus the full subkey path in the script), the
+same hive the application itself writes through `UrlProtocolRegistrar`, so no admin rights are
+needed. All values are removed on uninstall (`uninsdeletekey` / `uninsdeletevalue`).
+
+`magnet:` is a real handler, not a fallback: clicking a magnet link in any browser or in Explorer
+opens NovaDownload and queues the transfer. Windows keeps a single handler per scheme, so this
+replaces whatever BitTorrent client held `magnet:` before. The *Open magnet: links* setting in the
+application rewrites or deletes the same key at runtime, and uninstalling removes it, which hands
+the scheme back rather than leaving a command pointing at a deleted executable.
 
 Native messaging registration is **not** done with `[Registry]` entries: the installer runs
 
@@ -148,7 +159,7 @@ also why uninstall runs `--unregister` with `runascurrentuser` and a `RunOnceId`
 ### Dependencies
 
 **There is no prerequisite.** The payload is a self-contained `win-x64` publish, so .NET 9 does not
-have to be installed, and no runtime version mismatch is possible. The cost is size (~43 MB
+have to be installed, and no runtime version mismatch is possible. The cost is size (~46 MB
 compressed); the benefit is that a clean machine installs without a second download, without a
 reboot and without elevation in per-user mode.
 
@@ -183,8 +194,8 @@ Use *Settings → Apps → NovaDownload → Uninstall*, the Start Menu entry, or
 ```
 
 What is removed: the install folder, the Start Menu group, the desktop shortcut (if created), the
-URL protocol registry keys, the native messaging registry entries and manifests (via
-`--unregister`), and the uninstall entry itself.
+`novadownload://` and `magnet:` protocol registry keys, the native messaging registry entries and
+manifests (via `--unregister`), and the uninstall entry itself.
 
 What is deliberately kept, and announced in a message at the end of the uninstall:
 
@@ -193,10 +204,12 @@ What is deliberately kept, and announced in a message at the end of the uninstal
 | `%APPDATA%\NovaDownload\` (settings, queue history) | Reinstalling restores the user's setup |
 | `%LOCALAPPDATA%\NovaDownload\extensions\` | Unpacked browser extensions are still loaded from there |
 | `%LOCALAPPDATA%\NovaDownload\logs\` | Diagnostics |
+| `%LOCALAPPDATA%\NovaDownload\torrent-cache\` | DHT routing table, magnet metadata and fast-resume data; deleting it only costs a re-check, never downloaded data |
+| The torrents themselves | They live in the destination folder the user chose, which the installer never writes to |
 
 There is **no** `[UninstallDelete]` section and no silent deletion of profile data anywhere in the
-script; a unit test asserts both. Deleting those two folders by hand is the documented way to
-remove everything.
+script; a unit test asserts both. Deleting those folders by hand is the documented way to remove
+everything.
 
 ---
 
@@ -231,6 +244,10 @@ key or password is stored in this repository.
 | Browser says the native host is not registered | Installed per user by a different account, or the host path moved | `NovaDownload.NativeHost.exe --register` as the account that runs the browser |
 | Extensions not visible in the browser | Unpacked extensions are never auto-installed | Load the folder from `edge://extensions` / `chrome://extensions` (see `BROWSER_INTEGRATION.md`) |
 | `PrivilegesRequired admin ... per-user areas` warning at compile time | Expected: the extension folder is intentionally per user | No action; documented above |
+| Silent install (for example `/CURRENTUSER /VERYSILENT`) exiting with code 5, the log showing `RegCreateKeyEx ... code 5` and `User canceled the installation process` | The URL protocol entries were written with `Root: HKCR`, which is the elevated hive for an all-users install; the per-user run therefore could not write there and Inno rolled back | Fixed: the entries now use `Root: HKCU` with the full subkey path. The install completes with exit code 0 and registers HKCU\Software\Classes\novadownload |
+| A torrent sits at 0 peers / 0 B/s and never leaves `Metadata` | Incoming connections blocked: Windows Defender Firewall prompt was dismissed, the listen port is not forwarded, or the network is CGNAT. Trackerless magnet links also need DHT to leave the local network | Allow `NovaDownload.App.exe` on **private** networks in *Windows Defender Firewall → Allow an app*; enable *Settings → BitTorrent → Ask the router to open the port* (UPnP / NAT-PMP); or forward port **51413** TCP+UDP on the router. Check reachability from outside with `Test-NetConnection -ComputerName <ip> -Port 51413`. Outgoing-only still works, just slower |
+| A torrent listening port is already in use | Another client (qBittorrent, Transmission…) holds 51413 | Change *Settings → BitTorrent → Listen port*; the engine cannot bind and falls back to no incoming peers |
+| Torrent row fails with "No peer returned the torrent metadata" | Magnet link with no live seeders, or a v2-only hash against a v1 swarm | Verify the link has seeders; re-copy it from the source. The 5-minute ceiling is deliberate — see `BITTORRENT.md` §9 |
 
 Installation log: run with `/LOG="%TEMP%\nova-install.log"`. Uninstall log:
 `%TEMP%\unins000.log` (or the path shown in the uninstall dialog).
@@ -252,7 +269,7 @@ Get-ItemProperty "HKLM:\Software\Microsoft\Windows\CurrentVersion\Uninstall\{7C2
 & "$env:ProgramFiles\NovaDownload\NovaDownload.NativeHost.exe" --status
 
 # 4. URL protocol
-Get-ItemProperty "Registry::HKEY_CLASSES_ROOT\novadownload\shell\open\command"
+Get-ItemProperty "Registry::HKEY_CURRENT_USER\Software\Classes\novadownload\shell\open\command"
 
 # 5. extension packages
 Get-ChildItem "$env:LOCALAPPDATA\NovaDownload\extensions"

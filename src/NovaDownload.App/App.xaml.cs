@@ -7,9 +7,12 @@ using NovaDownload.App.Services;
 using NovaDownload.App.ViewModels;
 using NovaDownload.App.Views;
 using NovaDownload.BrowserIntegration.Protocol;
+using NovaDownload.BrowserIntegration.Registration;
 using NovaDownload.Core.Interfaces;
 using NovaDownload.Core.Localization;
+using NovaDownload.Core.Models;
 using NovaDownload.DownloadEngine.Services;
+using NovaDownload.DownloadEngine.Torrenting;
 using NovaDownload.Infrastructure.Services;
 
 namespace NovaDownload.App;
@@ -35,7 +38,21 @@ public partial class App : Application
                         sp.GetRequiredService<HttpClient>(),
                         settings.Current.MaxConcurrentDownloads);
                 });
-                services.AddSingleton<IDownloadService>(sp => sp.GetRequiredService<HttpDownloadService>());
+
+                services.AddSingleton(sp =>
+                {
+                    var settings = sp.GetRequiredService<ISettingsService>();
+                    return new TorrentDownloadService(
+                        sp.GetRequiredService<HttpClient>(),
+                        TorrentOptionsFrom(settings.Current),
+                        message => LogLine("torrent", message));
+                });
+
+                // The router is the only IDownloadService anyone resolves: it picks the engine from
+                // the source and merges both queues into one snapshot.
+                services.AddSingleton<IDownloadService>(sp => new DownloadServiceRouter(
+                    sp.GetRequiredService<HttpDownloadService>(),
+                    sp.GetRequiredService<TorrentDownloadService>()));
 
                 services.AddSingleton(sp => new BrowserIntegrationService(
                     sp.GetRequiredService<IDownloadService>(),
@@ -91,6 +108,10 @@ public partial class App : Application
             Localizer.Apply(settings.Current.Language);
             AppHost.Services.GetRequiredService<ThemeService>().Apply(settings.Current.Theme);
 
+            // magnet: must already point here before the window opens: a link clicked while the app
+            // is starting has to land in this process, not in a second one.
+            ApplyMagnetHandler(settings.Current);
+
             var bridge = AppHost.Services.GetRequiredService<BrowserIntegrationService>();
 
             var window = AppHost.Services.GetRequiredService<MainWindow>();
@@ -112,6 +133,7 @@ public partial class App : Application
                         "NovaDownload", MessageBoxButton.OK, MessageBoxImage.Warning);
                 }
             }
+
         }
         catch (Exception ex)
         {
@@ -161,6 +183,52 @@ public partial class App : Application
         return full;
     }
 
+    /// <summary>Maps the persisted preferences onto the BitTorrent session.</summary>
+    private static TorrentEngineOptions TorrentOptionsFrom(AppSettings settings) => new()
+    {
+        ListenPort = settings.TorrentListenPort,
+        EnableDht = settings.TorrentEnableDht,
+        EnablePeerExchange = settings.TorrentEnablePex,
+        EnableLocalPeerDiscovery = settings.TorrentEnableLsd,
+        EnablePortForwarding = settings.TorrentEnablePortForwarding,
+        SeedAfterCompletion = settings.TorrentSeedAfterCompletion,
+        MaxUploadKib = settings.TorrentMaxUploadKib,
+        MaxDownloadKib = settings.TorrentMaxDownloadKib,
+        ConnectionsPerTorrent = settings.TorrentConnectionsPerTorrent,
+        MaxConnections = settings.TorrentMaxConnections,
+        CacheDirectory = Path.Combine(
+            Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData),
+            "NovaDownload", "torrent-cache")
+    };
+
+    /// <summary>
+    /// Applies the <c>magnet:</c> preference to the registry. Called at startup and again whenever
+    /// the setting changes, so a magnet link clicked a second later already reaches this process.
+    /// </summary>
+    internal static void ApplyMagnetHandler(AppSettings settings)
+    {
+        try
+        {
+            var executable = Environment.ProcessPath;
+            if (string.IsNullOrEmpty(executable)) return;
+
+            if (settings.TorrentHandleMagnetLinks)
+            {
+                UrlProtocolRegistrar.RegisterMagnet(executable);
+                LogLine("magnet-protocol", $"registered for {executable}");
+            }
+            else
+            {
+                UrlProtocolRegistrar.UnregisterMagnet();
+                LogLine("magnet-protocol", "unregistered");
+            }
+        }
+        catch (Exception ex)
+        {
+            Log("magnet-protocol", ex);
+        }
+    }
+
     private static void Write(string path, string stage, string message)
     {
         try
@@ -177,6 +245,10 @@ public partial class App : Application
         {
             var bridge = AppHost?.Services.GetService<BrowserIntegrationService>();
             if (bridge != null) await bridge.StopAsync();
+
+            // Saves the DHT routing table and flushes fast-resume data before the session dies.
+            var torrent = AppHost?.Services.GetService<TorrentDownloadService>();
+            if (torrent != null) await torrent.DisposeAsync();
 
             var settings = AppHost?.Services.GetService<ISettingsService>();
             if (settings != null) await settings.SaveAsync();

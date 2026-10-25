@@ -5,6 +5,7 @@ using NovaDownload.App.Services;
 using NovaDownload.BrowserIntegration;
 using NovaDownload.Core.Interfaces;
 using NovaDownload.Core.Localization;
+using NovaDownload.DownloadEngine.Torrenting;
 
 namespace NovaDownload.App.ViewModels;
 
@@ -13,6 +14,7 @@ public partial class SettingsViewModel : LocalizedViewModel
     private readonly ISettingsService _settings;
     private readonly ThemeService _theme;
     private readonly BrowserIntegrationService _bridge;
+    private readonly TorrentDownloadService? _torrent;
     private bool _loading;
 
     [ObservableProperty] private string downloadDirectory = string.Empty;
@@ -21,6 +23,20 @@ public partial class SettingsViewModel : LocalizedViewModel
     [ObservableProperty] private bool minimizeToTray;
     [ObservableProperty] private bool isDark;
     [ObservableProperty] private bool hasSaved;
+
+    // BitTorrent
+    [ObservableProperty] private int torrentListenPort = 51413;
+    [ObservableProperty] private bool torrentEnableDht = true;
+    [ObservableProperty] private bool torrentEnablePex = true;
+    [ObservableProperty] private bool torrentEnableLpd = true;
+    [ObservableProperty] private bool torrentEnablePortForwarding = true;
+    [ObservableProperty] private bool torrentSeedAfterCompletion = true;
+
+    [ObservableProperty] private bool torrentHandleMagnetLinks = true;
+    [ObservableProperty] private int torrentMaxUploadKib;
+    [ObservableProperty] private int torrentMaxDownloadKib;
+    [ObservableProperty] private int torrentConnectionsPerTorrent = 60;
+    [ObservableProperty] private int torrentMaxConnections = 200;
 
     // Browser integration
     [ObservableProperty] private bool enableBrowserIntegration = true;
@@ -35,11 +51,13 @@ public partial class SettingsViewModel : LocalizedViewModel
     [ObservableProperty] private bool useEnglish;
     [ObservableProperty] private bool useFrench;
 
-    public SettingsViewModel(ISettingsService settings, ThemeService theme, BrowserIntegrationService bridge)
+    public SettingsViewModel(ISettingsService settings, ThemeService theme, BrowserIntegrationService bridge,
+        TorrentDownloadService? torrent = null)
     {
         _settings = settings;
         _theme = theme;
         _bridge = bridge;
+        _torrent = torrent;
         Load();
         RefreshBrowserState();
     }
@@ -75,6 +93,18 @@ public partial class SettingsViewModel : LocalizedViewModel
             EnableBrowserIntegration = current.EnableBrowserIntegration;
             ActivateOnBrowserDownload = current.ActivateOnBrowserDownload;
             IsDark = _theme.IsDark;
+
+            TorrentListenPort = current.TorrentListenPort;
+            TorrentEnableDht = current.TorrentEnableDht;
+            TorrentEnablePex = current.TorrentEnablePex;
+            TorrentEnableLpd = current.TorrentEnableLsd;
+            TorrentEnablePortForwarding = current.TorrentEnablePortForwarding;
+            TorrentSeedAfterCompletion = current.TorrentSeedAfterCompletion;
+            TorrentHandleMagnetLinks = current.TorrentHandleMagnetLinks;
+            TorrentMaxUploadKib = current.TorrentMaxUploadKib;
+            TorrentMaxDownloadKib = current.TorrentMaxDownloadKib;
+            TorrentConnectionsPerTorrent = current.TorrentConnectionsPerTorrent;
+            TorrentMaxConnections = current.TorrentMaxConnections;
 
             switch (current.Language)
             {
@@ -113,6 +143,18 @@ public partial class SettingsViewModel : LocalizedViewModel
         if (_loading) return;
         _settings.Current.ActivateOnBrowserDownload = value;
         _ = _settings.SaveAsync();
+    }
+
+    /// <summary>
+    /// Takes the <c>magnet:</c> scheme, or gives it back, the moment the toggle moves: the setting
+    /// is not a hint for the next start, it is what the registry says right now.
+    /// </summary>
+    partial void OnTorrentHandleMagnetLinksChanged(bool value)
+    {
+        if (_loading) return;
+        _settings.Current.TorrentHandleMagnetLinks = value;
+        _ = _settings.SaveAsync();
+        NovaDownload.App.App.ApplyMagnetHandler(_settings.Current);
     }
 
     /// <summary>Reads the current per-user registration and bridge state without changing anything.</summary>
@@ -221,8 +263,39 @@ public partial class SettingsViewModel : LocalizedViewModel
         current.NotifyOnComplete = NotifyOnComplete;
         current.MinimizeToTray = MinimizeToTray;
 
+        current.TorrentListenPort = Math.Clamp(TorrentListenPort, 0, 65535);
+        current.TorrentEnableDht = TorrentEnableDht;
+        current.TorrentEnablePex = TorrentEnablePex;
+        current.TorrentEnableLsd = TorrentEnableLpd;
+        current.TorrentEnablePortForwarding = TorrentEnablePortForwarding;
+        current.TorrentSeedAfterCompletion = TorrentSeedAfterCompletion;
+        current.TorrentHandleMagnetLinks = TorrentHandleMagnetLinks;
+        current.TorrentMaxUploadKib = Math.Clamp(TorrentMaxUploadKib, 0, 1_000_000);
+        current.TorrentMaxDownloadKib = Math.Clamp(TorrentMaxDownloadKib, 0, 1_000_000);
+        current.TorrentConnectionsPerTorrent = Math.Clamp(TorrentConnectionsPerTorrent, 5, 500);
+        current.TorrentMaxConnections = Math.Clamp(TorrentMaxConnections, 10, 2000);
+
         HasSaved = false;
         await _settings.SaveAsync();
+
+        // The session is already running: push the limits that can change live.
+        if (_torrent != null)
+        {
+            await _torrent.ApplyOptionsAsync(new TorrentEngineOptions
+            {
+                ListenPort = current.TorrentListenPort,
+                EnableDht = current.TorrentEnableDht,
+                EnablePeerExchange = current.TorrentEnablePex,
+                EnableLocalPeerDiscovery = current.TorrentEnableLsd,
+                EnablePortForwarding = current.TorrentEnablePortForwarding,
+                SeedAfterCompletion = current.TorrentSeedAfterCompletion,
+                MaxUploadKib = current.TorrentMaxUploadKib,
+                MaxDownloadKib = current.TorrentMaxDownloadKib,
+                ConnectionsPerTorrent = current.TorrentConnectionsPerTorrent,
+                MaxConnections = current.TorrentMaxConnections
+            });
+        }
+
         HasSaved = true;
     }
 

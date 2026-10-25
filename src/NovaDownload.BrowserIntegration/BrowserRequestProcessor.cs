@@ -72,6 +72,7 @@ public sealed class BrowserRequestProcessor
                 BrowserActions.Status => Decorated(Snapshot(action)),
                 BrowserActions.Open => HandleOpen(action),
                 BrowserActions.Download => await HandleDownloadAsync(validation.Request, cancellationToken).ConfigureAwait(false),
+                BrowserActions.Torrent => await HandleDownloadAsync(validation.Request, cancellationToken).ConfigureAwait(false),
                 _ => Decorated(BrowserResponse.Fail(ResponseCodes.UnknownAction, $"Unsupported action '{action}'.", action))
             };
         }
@@ -93,7 +94,9 @@ public sealed class BrowserRequestProcessor
     {
         var action = request.Action;
 
-        if (!_settings.Current.EnableBrowserIntegration)
+        // The magnet: handler and the command line are not "browser integration": switching the
+        // extension off must not stop a torrent link from opening the application.
+        if (action != BrowserActions.Torrent && !_settings.Current.EnableBrowserIntegration)
             return Decorated(BrowserResponse.Fail(ResponseCodes.Disabled,
                 "Browser integration is turned off in NovaDownload settings.", action));
 

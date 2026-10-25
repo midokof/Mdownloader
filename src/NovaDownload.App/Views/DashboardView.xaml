@@ -138,9 +138,19 @@
                                                     <TextBlock Text="{Binding FileName}" FontSize="12.5" FontWeight="SemiBold"
                                                                Foreground="{DynamicResource TextPrimaryBrush}"
                                                                TextTrimming="CharacterEllipsis"/>
-                                                    <ProgressBar Style="{StaticResource ThinProgress}" Height="5" Maximum="100"
-                                                                 Value="{Binding ProgressPercent, Mode=OneWay}"
-                                                                 VerticalAlignment="Center" Margin="0,7,0,0"/>
+                                                    <Grid Margin="0,7,0,0">
+                                                        <Grid.ColumnDefinitions>
+                                                            <ColumnDefinition Width="*"/>
+                                                            <ColumnDefinition Width="Auto"/>
+                                                        </Grid.ColumnDefinitions>
+                                                        <ProgressBar Style="{StaticResource ThinProgress}" Height="5" Maximum="100"
+                                                                     Value="{Binding ProgressPercent, Mode=OneWay}"
+                                                                     VerticalAlignment="Center"/>
+                                                        <TextBlock Grid.Column="1" Text="{Binding ProgressPercentText}"
+                                                                   FontSize="10.5" FontWeight="SemiBold" Margin="10,0,0,0"
+                                                                   VerticalAlignment="Center"
+                                                                   Foreground="{Binding Status, Converter={StaticResource StatusToBrush}}"/>
+                                                    </Grid>
                                                 </StackPanel>
 
                                                 <StackPanel Grid.Column="2" VerticalAlignment="Center" Width="118">

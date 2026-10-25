@@ -82,15 +82,27 @@ Name: "{group}\Uninstall {#AppName}"; Filename: "{uninstallexe}"
 Name: "{autodesktop}\{#AppName}"; Filename: "{app}\{#AppExeName}"; Tasks: desktopicon
 
 [Registry]
-; novadownload:// fallback channel. HKCR maps to HKCU when installing per user.
-Root: HKCR; Subkey: "novadownload"; ValueType: string; ValueName: "URL:NovaDownload Protocol"; \
+; novadownload:// fallback channel, registered per user under HKCU\Software\Classes (same key the app writes).
+Root: HKCU; Subkey: "Software\Classes\novadownload"; ValueType: string; ValueName: "URL:NovaDownload Protocol"; \
     ValueData: ""; Flags: uninsdeletekey
-Root: HKCR; Subkey: "novadownload"; ValueType: string; ValueName: "URL Protocol"; \
+Root: HKCU; Subkey: "Software\Classes\novadownload"; ValueType: string; ValueName: "URL Protocol"; \
     ValueData: ""; Flags: uninsdeletevalue
-Root: HKCR; Subkey: "novadownload\DefaultIcon"; ValueType: string; ValueName: ""; \
+Root: HKCU; Subkey: "Software\Classes\novadownload\DefaultIcon"; ValueType: string; ValueName: ""; \
     ValueData: "{app}\{#AppExeName},0"
-Root: HKCR; Subkey: "novadownload\shell\open\command"; ValueType: string; ValueName: ""; \
+Root: HKCU; Subkey: "Software\Classes\novadownload\shell\open\command"; ValueType: string; ValueName: ""; \
     ValueData: """{app}\{#AppExeName}"" ""%1"""
+
+; magnet: - a link clicked anywhere in Windows opens the swarm engine directly. Windows keeps one
+; handler per scheme, so this takes magnet: from any other BitTorrent client; the setting in the
+; application gives it back.
+Root: HKCU; Subkey: "Software\Classes\magnet"; ValueType: string; ValueName: ""; \
+    ValueData: "URL:NovaDownload magnet handler"; Flags: uninsdeletekey
+Root: HKCU; Subkey: "Software\Classes\magnet"; ValueType: string; ValueName: "URL Protocol"; \
+    ValueData: ""; Flags: uninsdeletevalue
+Root: HKCU; Subkey: "Software\Classes\magnet\DefaultIcon"; ValueType: string; ValueName: ""; \
+    ValueData: "{app}\{#AppExeName},0"; Flags: uninsdeletekey
+Root: HKCU; Subkey: "Software\Classes\magnet\shell\open\command"; ValueType: string; ValueName: ""; \
+    ValueData: """{app}\{#AppExeName}"" ""%1"""; Flags: uninsdeletekey
 
 [Run]
 ; Native messaging manifests + per-user registry keys for Chrome, Edge and Firefox.

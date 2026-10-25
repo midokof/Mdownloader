@@ -199,8 +199,9 @@ and it runs **in the app**, not only in the extension:
 
 | Input | Rule |
 | --- | --- |
-| `action` | must be one of `ping`, `status`, `open`, `download` (case-insensitive) |
+| `action` | must be one of `ping`, `status`, `open`, `download`, `torrent` (case-insensitive) |
 | `url` | absolute, `http`/`https` only, ≤ 2048 chars, no control characters, no `user:pass@`, fragment stripped |
+| `url` (action `torrent`) | magnet URI carrying `xt=urn:btih:` (40 hex or 32 base32), an existing local `.torrent`, or an `http(s)` URL ending in `.torrent`; ≤ 8192 chars, no control characters |
 | `fileName` | ≤ 180 chars after sanitising; separators/`:`/control characters/`.`/`..` rejected; Windows reserved device names rejected; invalid characters replaced |
 | `directory` | absolute local path only; UNC/`\\?\`/relative/`..` segments rejected; drive must exist |
 | `requestId` | `[A-Za-z0-9._:-]{1,64}` |
@@ -209,6 +210,13 @@ and it runs **in the app**, not only in the extension:
 No part of a request is ever passed to a shell, `cmd`, `powershell`, or a process start. The host
 never takes a command from the wire: it only relays the request to the pipe (or starts the *known*
 application executable to service it).
+
+The `torrent` action exists for the `magnet:` protocol handler and the command line, which reach the
+engine through the same pipe. It is deliberately **not** part of what the extension may use: the
+extension never sends it, and a `download` request carrying a magnet URL is still refused with
+`UNSUPPORTED_SCHEME` — a swarm transfer has to be tagged as such. The *Browser integration* setting
+does not gate it either: switching the extension off must not stop a magnet link from opening the
+application.
 
 ### Settings gate
 

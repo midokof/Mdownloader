@@ -55,6 +55,24 @@ public class PackagingAndConfigurationTests
         Assert.Contains("novadownload", script);
         Assert.Contains("{group}", script);
 
+        // The magnet: handler is part of the shipped surface: registered per user, cleaned up on
+        // uninstall, and pointing at the application executable.
+        Assert.Contains(@"Software\Classes\magnet\shell\open\command", script);
+        var magnetCommand = script
+            .Split('\n')
+            .Where(line => line.Contains("Software\\Classes\\magnet\\shell\\open\\command", StringComparison.Ordinal))
+            .Select(line => line.Trim())
+            .ToList();
+        Assert.NotEmpty(magnetCommand);
+
+        var magnetValue = script
+            .Split('\n')
+            .SkipWhile(line => !line.Contains("Subkey: \"Software\\Classes\\magnet\\shell\\open\\command\"", StringComparison.Ordinal))
+            .First(line => line.Contains("ValueData", StringComparison.Ordinal));
+
+        Assert.Contains("%1", magnetValue, StringComparison.Ordinal);
+        Assert.Contains("AppExeName", magnetValue, StringComparison.Ordinal);
+
         // Nothing may point an uninstall-time deletion at the profile data folders.
         Assert.DoesNotContain("[UninstallDelete]", script);
     }

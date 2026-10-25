@@ -1,6 +1,7 @@
 using System.Text.RegularExpressions;
 using NovaDownload.BrowserIntegration.Models;
 using NovaDownload.BrowserIntegration.Protocol;
+using NovaDownload.Core.Common;
 
 namespace NovaDownload.BrowserIntegration.Validation;
 
@@ -59,6 +60,22 @@ public static partial class DownloadRequestValidator
                 browser = candidate;
         }
 
+        // A torrent source is gated here too, but with its own shape rules: the media URL
+        // validator refuses anything that is not http(s), and a magnet link is something the
+        // engine can fetch perfectly well.
+        if (action == BrowserActions.Torrent)
+        {
+            var source = ValidateTorrentSource(request.Url, out var sourceError);
+            if (source is null) return ValidationResult.Fail(sourceError.Code, sourceError.Message);
+
+            var torrentDirectory = ValidateDirectory(request.Directory, out var torrentDirectoryError);
+            if (!string.IsNullOrEmpty(torrentDirectoryError.Code))
+                return ValidationResult.Fail(torrentDirectoryError.Code, torrentDirectoryError.Message);
+
+            return ValidationResult.Ok(new ValidatedRequest(
+                action, source, null, torrentDirectory, null, null, browser, requestId));
+        }
+
         // Non-download actions never carry a payload that touches the engine.
         if (action != BrowserActions.Download)
             return ValidationResult.Ok(new ValidatedRequest(action, null, null, null, null, null, browser, requestId));
@@ -85,6 +102,23 @@ public static partial class DownloadRequestValidator
             : null;
 
         return ValidationResult.Ok(new ValidatedRequest(action, url, fileName, directory, pageUrl, mediaType, browser, requestId));
+    }
+
+    /// <summary>
+    /// Validates a BitTorrent source: a magnet URI carrying an info hash, an existing local
+    /// <c>.torrent</c> file, or an http(s) URL whose path ends in <c>.torrent</c>.
+    /// </summary>
+    public static string? ValidateTorrentSource(string? candidate, out (string Code, string Message) error)
+    {
+        error = default;
+
+        if (!TorrentSourceRules.TryNormalize(candidate, out var normalized, out var reason))
+        {
+            error = (ResponseCodes.InvalidRequest, reason);
+            return null;
+        }
+
+        return normalized;
     }
 
     /// <summary>Validates and normalizes an absolute http/https URL (fragment removed).</summary>

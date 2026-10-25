@@ -202,6 +202,93 @@ public class BrowserBridgeIntegrationTests
         Assert.Empty(engine.Started);
     }
 
+    /// <summary>
+    /// A <c>magnet:</c> link clicked in Windows arrives with the torrent action (the media URL
+    /// validator would refuse the scheme) and must reach the swarm engine untouched.
+    /// </summary>
+    [Fact]
+    public async Task A_Magnet_Link_Reaches_The_Engine_Through_The_Torrent_Action()
+    {
+        const string magnet =
+            "magnet:?xt=urn:btih:10553FF05A371CFDB0F25F9F0BD45AA937B442E8&dn=NovaDownload+sample";
+
+        var engine = new HttpDownloadEngineStub();
+        var settings = new Settings(TempDir());
+        var processor = new BrowserRequestProcessor(engine, settings);
+        await using var bridge = new BrowserBridgeServer(processor, UniquePipeName());
+
+        var payload = System.Text.Json.JsonSerializer.Serialize(new BrowserRequest
+        {
+            Action = BrowserActions.Torrent,
+            Url = magnet,
+            Directory = settings.Current.DefaultDownloadDirectory
+        }, BrowserBridgeProtocol.Json);
+
+        var response = await bridge.HandleConnectionAsync(new MemoryStream(Frame(payload)), CancellationToken.None);
+
+        Assert.True(response.Ok, $"{response.Code}: {response.Message}");
+        var started = Assert.Single(engine.Started);
+        Assert.Equal(magnet, started.Url);
+        // The swarm names its own files once metadata arrives; a hint must not be forwarded.
+        Assert.Null(started.FileName);
+    }
+
+    /// <summary>
+    /// The magnet: handler is not browser integration: switching the extension off must not stop a
+    /// torrent link from opening the application, while a browser media download stays refused.
+    /// </summary>
+    [Fact]
+    public async Task Disabling_Browser_Integration_Does_Not_Stop_A_Magnet_Link()
+    {
+        const string magnet = "magnet:?xt=urn:btih:0123456789ABCDEF0123456789ABCDEF01234567";
+
+        var engine = new HttpDownloadEngineStub();
+        var settings = new Settings(TempDir());
+        settings.Current.EnableBrowserIntegration = false;
+
+        var processor = new BrowserRequestProcessor(engine, settings);
+        await using var bridge = new BrowserBridgeServer(processor, UniquePipeName());
+
+        var torrent = await bridge.HandleConnectionAsync(new MemoryStream(Frame(
+            System.Text.Json.JsonSerializer.Serialize(new BrowserRequest
+            {
+                Action = BrowserActions.Torrent,
+                Url = magnet
+            }, BrowserBridgeProtocol.Json))), CancellationToken.None);
+
+        var media = await bridge.HandleConnectionAsync(new MemoryStream(Frame(
+            System.Text.Json.JsonSerializer.Serialize(new BrowserRequest
+            {
+                Action = BrowserActions.Download,
+                Url = "https://example.com/clip.mp4"
+            }, BrowserBridgeProtocol.Json))), CancellationToken.None);
+
+        Assert.True(torrent.Ok, $"{torrent.Code}: {torrent.Message}");
+        Assert.Equal(ResponseCodes.Disabled, media.Code);
+        Assert.Single(engine.Started);
+    }
+
+    /// <summary>A magnet without an info hash cannot start a transfer, so it stops at the gate.</summary>
+    [Fact]
+    public async Task A_Magnet_Without_An_Info_Hash_Never_Reaches_The_Engine()
+    {
+        var engine = new HttpDownloadEngineStub();
+        var processor = new BrowserRequestProcessor(engine, new Settings(TempDir()));
+        await using var bridge = new BrowserBridgeServer(processor, UniquePipeName());
+
+        var payload = System.Text.Json.JsonSerializer.Serialize(new BrowserRequest
+        {
+            Action = BrowserActions.Torrent,
+            Url = "magnet:?dn=No+Hash+Here"
+        }, BrowserBridgeProtocol.Json);
+
+        var response = await bridge.HandleConnectionAsync(new MemoryStream(Frame(payload)), CancellationToken.None);
+
+        Assert.False(response.Ok);
+        Assert.Equal(ResponseCodes.InvalidRequest, response.Code);
+        Assert.Empty(engine.Started);
+    }
+
     private static byte[] Frame(string payload)
     {
         var body = System.Text.Encoding.UTF8.GetBytes(payload);

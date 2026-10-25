@@ -379,4 +379,15 @@ public class HttpDownloadService : IDownloadService
             await Task.Delay(250, cancellationToken).ConfigureAwait(false);
         }
     }
+
+    public Task<IReadOnlyCollection<TorrentFileInfo>> LoadTorrentMetadataAsync(string url, CancellationToken cancellationToken = default)
+    {
+        throw new NotSupportedException("Torrent metadata is only available from the BitTorrent engine.");
+    }
+
+    public Task<DownloadItem> StartDownloadAsync(string url, string destinationDirectory, IReadOnlyCollection<TorrentFileInfo> selectedFiles, string? fileName = null, CancellationToken cancellationToken = default)
+    {
+        // Torrent sources are not handled by the HTTP engine.
+        throw new NotSupportedException("Torrent sources are not supported by the HTTP engine.");
+    }
 }

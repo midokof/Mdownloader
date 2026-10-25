@@ -35,15 +35,22 @@
                     <Grid.ColumnDefinitions>
                         <ColumnDefinition Width="*"/>
                         <ColumnDefinition Width="Auto"/>
+                        <ColumnDefinition Width="Auto"/>
                     </Grid.ColumnDefinitions>
                     <Border Style="{StaticResource InputFrame}">
                         <TextBox x:Name="UrlBox" Style="{StaticResource InputBox}"
                                  AutomationProperties.AutomationId="UrlBox"
+                                 AutomationProperties.Name="Link or torrent"
                                  Text="{Binding Url, UpdateSourceTrigger=PropertyChanged}"/>
                     </Border>
                     <Button Grid.Column="1" Style="{StaticResource SecondaryButton}" Content="{loc:Tr Btn_Paste}"
                             AutomationProperties.Name="Paste"
                             Command="{Binding PasteCommand}" Margin="8,0,0,0" Padding="16,8"/>
+                    <Button Grid.Column="2" Style="{StaticResource SecondaryButton}"
+                            Content="{loc:Tr Btn_OpenTorrent}"
+                            ToolTip="{loc:Tr Btn_OpenTorrentTip}"
+                            AutomationProperties.Name="Open torrent file"
+                            Command="{Binding BrowseTorrentCommand}" Margin="8,0,0,0" Padding="14,8"/>
                 </Grid>
 
                 <!-- filename -->
@@ -54,7 +61,8 @@
                              AutomationProperties.Name="File name"
                              Text="{Binding FileName, UpdateSourceTrigger=PropertyChanged}"/>
                 </Border>
-                <TextBlock Text="{loc:Tr Add_FileNameHint}" Style="{StaticResource CaptionText}" Margin="2,6,0,0"/>
+                <TextBlock Text="{Binding SourceHint}" Style="{StaticResource CaptionText}" Margin="2,6,0,0"
+                           TextWrapping="Wrap"/>
 
                 <!-- folder -->
                 <TextBlock Text="{loc:Tr Field_SaveTo}" Style="{StaticResource CaptionText}" FontWeight="SemiBold" Margin="0,18,0,8"/>
@@ -93,8 +101,9 @@
                     <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
                         <Path Data="{StaticResource IconCheck}" Width="12" Height="12" Stretch="Uniform"
                               Fill="{DynamicResource SuccessBrush}" VerticalAlignment="Center" Margin="0,0,7,0"/>
-                        <TextBlock Text="{loc:Tr Add_ResumeHint}"
-                                   Style="{StaticResource CaptionText}" VerticalAlignment="Center"/>
+                        <TextBlock Text="{Binding ResumeHint}"
+                                   Style="{StaticResource CaptionText}" VerticalAlignment="Center"
+                                   TextWrapping="Wrap" MaxWidth="420"/>
                     </StackPanel>
                     <Button Style="{StaticResource PrimaryButton}" HorizontalAlignment="Right"
                             AutomationProperties.Name="Start download"
