@@ -1,0 +1,3 @@
+body { width: 392px; max-height: 560px; overflow-y: auto; }
+#banner:not(:empty) { padding: 10px 14px 0; }
+#detectedEmpty:empty, #detected:empty + #detectedEmpty { display: none; }

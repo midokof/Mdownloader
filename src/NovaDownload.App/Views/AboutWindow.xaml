@@ -1,0 +1,53 @@
+<Window x:Class="NovaDownload.App.Views.AboutWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:loc="clr-namespace:NovaDownload.App.Markup"
+        Title="{loc:Tr About_Title}"
+        Width="480" SizeToContent="Height"
+        WindowStartupLocation="CenterOwner"
+        WindowStyle="None"
+        ResizeMode="NoResize"
+        ShowInTaskbar="False"
+        Background="{DynamicResource BgBrush}"
+        UseLayoutRounding="True"
+        SnapsToDevicePixels="True"
+        FontFamily="Segoe UI Variable Text, Segoe UI">
+
+    <WindowChrome.WindowChrome>
+        <WindowChrome CaptionHeight="0" ResizeBorderThickness="0" GlassFrameThickness="0"
+                      CornerRadius="0" UseAeroCaptionButtons="False"/>
+    </WindowChrome.WindowChrome>
+
+    <Border BorderBrush="{DynamicResource BorderBrush}" BorderThickness="1" Background="{DynamicResource BgBrush}">
+        <StackPanel Margin="26,22,26,22">
+            <Grid Background="Transparent" MouseLeftButtonDown="Header_MouseLeftButtonDown">
+                <Button Style="{StaticResource IconButton}" HorizontalAlignment="Right" VerticalAlignment="Top"
+                        AutomationProperties.Name="Close" Click="Close_Click">
+                    <Path Data="{StaticResource IconClose}" Width="10" Height="10" Stretch="Uniform"
+                          Fill="{DynamicResource TextSecondaryBrush}"/>
+                </Button>
+            </Grid>
+
+            <Border Width="64" Height="64" CornerRadius="18" Background="{DynamicResource PrimarySoftBrush}"
+                    HorizontalAlignment="Left" Margin="0,4,0,0">
+                <Path Data="{StaticResource IconDownload}" Width="28" Height="28" Stretch="Uniform"
+                      Fill="{DynamicResource PrimaryBrush}"/>
+            </Border>
+
+            <TextBlock Text="NovaDownload" Style="{StaticResource DisplayText}" Margin="0,16,0,0"/>
+            <TextBlock Text="{loc:Tr App_Tagline}" Style="{StaticResource CaptionText}" Margin="0,2,0,0"/>
+
+            <TextBlock Style="{StaticResource CaptionText}" Margin="0,12,0,0">
+                <Run Text="{loc:Tr About_VersionLabel}"/>
+                <Run x:Name="VersionRun"/>
+            </TextBlock>
+
+            <TextBlock Text="{loc:Tr About_Body}" Style="{StaticResource SecondaryText}" TextWrapping="Wrap"
+                       Margin="0,14,0,0"/>
+
+            <Button Style="{StaticResource PrimaryButton}" Content="{loc:Tr About_Close}"
+                    HorizontalAlignment="Right" MinWidth="120" Margin="0,22,0,0"
+                    AutomationProperties.Name="Close about" Click="Close_Click"/>
+        </StackPanel>
+    </Border>
+</Window>

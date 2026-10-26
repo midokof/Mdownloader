@@ -1,0 +1,169 @@
+<Window x:Class="NovaDownload.App.Views.ConfirmationWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:loc="clr-namespace:NovaDownload.App.Markup"
+        Title="{loc:Tr Dlg_ConfirmTitle}"
+        Width="620" Height="600" MinWidth="560" MinHeight="540"
+        WindowStartupLocation="CenterOwner"
+        WindowStyle="None"
+        ResizeMode="CanResize"
+        ShowInTaskbar="False"
+        Background="{DynamicResource BgBrush}"
+        UseLayoutRounding="True"
+        SnapsToDevicePixels="True"
+        FontFamily="Segoe UI Variable Text, Segoe UI">
+
+    <WindowChrome.WindowChrome>
+        <WindowChrome CaptionHeight="0" ResizeBorderThickness="6" GlassFrameThickness="0"
+                      CornerRadius="0" UseAeroCaptionButtons="False"/>
+    </WindowChrome.WindowChrome>
+
+    <Border BorderBrush="{DynamicResource BorderBrush}" BorderThickness="1" Background="{DynamicResource BgBrush}">
+        <Grid Margin="22,18,22,18">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="*"/>
+                <RowDefinition Height="Auto"/>
+            </Grid.RowDefinitions>
+
+            <Grid Grid.Row="0" Background="Transparent" MouseLeftButtonDown="Header_MouseLeftButtonDown">
+                <StackPanel Orientation="Horizontal">
+                    <Border Width="36" Height="36" CornerRadius="10" Background="{DynamicResource PrimarySoftBrush}">
+                        <Path Data="{StaticResource IconDownload}" Width="16" Height="16" Stretch="Uniform"
+                              Fill="{DynamicResource PrimaryBrush}"/>
+                    </Border>
+                    <StackPanel Margin="12,0,0,0" VerticalAlignment="Center" MaxWidth="470">
+                        <TextBlock Text="{loc:Tr Dlg_ConfirmTitle}" Style="{StaticResource H2Text}"/>
+                        <TextBlock Text="{Binding FileName}" Style="{StaticResource CaptionText}"
+                                   TextTrimming="CharacterEllipsis" Margin="0,2,0,0"/>
+                    </StackPanel>
+                </StackPanel>
+
+                <Button Style="{StaticResource IconButton}" HorizontalAlignment="Right" VerticalAlignment="Top"
+                        ToolTip="{loc:Tr Tooltip_Close}" AutomationProperties.Name="Close" Click="Cancel_Click">
+                    <Path Data="{StaticResource IconClose}" Width="10" Height="10" Stretch="Uniform"
+                          Fill="{DynamicResource TextSecondaryBrush}"/>
+                </Button>
+            </Grid>
+
+            <ScrollViewer Grid.Row="1" VerticalScrollBarVisibility="Auto" Margin="0,16,0,0">
+                <StackPanel>
+
+                    <!-- URL -->
+                    <TextBlock Text="{loc:Tr Confirm_Source}" Style="{StaticResource CaptionText}" FontWeight="SemiBold"
+                               Margin="0,0,0,6"/>
+                    <Border Style="{StaticResource InputFrame}">
+                        <TextBox Style="{StaticResource InputBox}" IsReadOnly="True"
+                                 AutomationProperties.AutomationId="ConfirmUrlBox"
+                                 AutomationProperties.Name="URL"
+                                 Text="{Binding Source, Mode=OneWay}"/>
+                    </Border>
+
+                    <!-- size + hint -->
+                    <Grid Margin="0,12,0,0">
+                        <StackPanel Orientation="Horizontal">
+                            <TextBlock Text="{loc:Tr Confirm_Size}" Style="{StaticResource CaptionText}"/>
+                            <TextBlock Text="{Binding SizeText}" Style="{StaticResource CaptionText}"
+                                       FontWeight="SemiBold" Foreground="{DynamicResource TextPrimaryBrush}"
+                                       Margin="8,0,0,0"/>
+                        </StackPanel>
+                        <TextBlock Text="{Binding KindHint}" Style="{StaticResource CaptionText}"
+                                   HorizontalAlignment="Right" TextTrimming="CharacterEllipsis" MaxWidth="330"/>
+                    </Grid>
+
+                    <!-- category -->
+                    <TextBlock Text="{loc:Tr Confirm_Category}" Style="{StaticResource CaptionText}" FontWeight="SemiBold"
+                               Margin="0,16,0,6"/>
+                    <Grid>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="*"/>
+                            <ColumnDefinition Width="Auto"/>
+                        </Grid.ColumnDefinitions>
+
+                        <Border Style="{StaticResource InputFrame}" Padding="4,0">
+                            <ComboBox ItemsSource="{Binding Categories}"
+                                      SelectedItem="{Binding SelectedCategory}"
+                                      DisplayMemberPath="Label"
+                                      AutomationProperties.AutomationId="ConfirmCategoryBox"
+                                      AutomationProperties.Name="Category"
+                                      BorderThickness="0" Background="Transparent"
+                                      Foreground="{DynamicResource TextPrimaryBrush}"
+                                      VerticalContentAlignment="Center" Height="34"/>
+                        </Border>
+
+                        <Button Grid.Column="1" Style="{StaticResource SecondaryButton}" Margin="8,0,0,0"
+                                Padding="12,7" Click="AddCategory_Click"
+                                AutomationProperties.Name="New category"
+                                ToolTip="{loc:Tr Confirm_AddCategory}">
+                            <Path Data="{StaticResource IconPlus}" Width="13" Height="13" Stretch="Uniform"
+                                  Fill="{DynamicResource TextSecondaryBrush}"/>
+                        </Button>
+                    </Grid>
+
+                    <!-- save as -->
+                    <TextBlock Text="{loc:Tr Confirm_SaveAs}" Style="{StaticResource CaptionText}" FontWeight="SemiBold"
+                               Margin="0,16,0,6"/>
+                    <Grid>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="*"/>
+                            <ColumnDefinition Width="Auto"/>
+                        </Grid.ColumnDefinitions>
+                        <Border Style="{StaticResource InputFrame}">
+                            <TextBox Style="{StaticResource InputBox}"
+                                     AutomationProperties.AutomationId="ConfirmFolderBox"
+                                     AutomationProperties.Name="Save to"
+                                     Text="{Binding Folder, UpdateSourceTrigger=PropertyChanged}"/>
+                        </Border>
+                        <Button Grid.Column="1" Style="{StaticResource SecondaryButton}" Margin="8,0,0,0"
+                                Padding="12,7" Click="Browse_Click"
+                                AutomationProperties.Name="Browse folder">
+                            <Path Data="{StaticResource IconFolder}" Width="13" Height="13" Stretch="Uniform"
+                                  Fill="{DynamicResource TextSecondaryBrush}"/>
+                        </Button>
+                    </Grid>
+
+                    <!-- description -->
+                    <TextBlock Text="{loc:Tr Confirm_Description}" Style="{StaticResource CaptionText}" FontWeight="SemiBold"
+                               Margin="0,16,0,6"/>
+                    <Border Style="{StaticResource InputFrame}" Padding="2">
+                        <TextBox Style="{StaticResource InputBox}" Height="72" AcceptsReturn="True"
+                                 TextWrapping="Wrap" VerticalContentAlignment="Top"
+                                 AutomationProperties.AutomationId="ConfirmDescriptionBox"
+                                 AutomationProperties.Name="Description"
+                                 Text="{Binding Description, UpdateSourceTrigger=PropertyChanged}"/>
+                    </Border>
+
+                    <Border Margin="0,12,0,0" CornerRadius="8" Padding="10,8"
+                            Background="{DynamicResource ErrorSoftBrush}"
+                            Visibility="{Binding HasError, Converter={StaticResource BoolToVis}}">
+                        <TextBlock Text="{Binding Error}" TextWrapping="Wrap" FontSize="12"
+                                   Foreground="{DynamicResource ErrorBrush}"/>
+                    </Border>
+                </StackPanel>
+            </ScrollViewer>
+
+            <!-- actions -->
+            <Grid Grid.Row="2" Margin="0,18,0,0">
+                <Button Style="{StaticResource SecondaryButton}" Content="{loc:Tr Btn_Cancel}"
+                        AutomationProperties.Name="Cancel" HorizontalAlignment="Left" MinWidth="110"
+                        Click="Cancel_Click"/>
+
+                <StackPanel Orientation="Horizontal" HorizontalAlignment="Right">
+                    <Button x:Name="LaterButton" Style="{StaticResource SecondaryButton}"
+                            Content="{loc:Tr Confirm_Later}" MinWidth="120" Margin="0,0,8,0"
+                            AutomationProperties.Name="Later" Click="Later_Click"/>
+
+                    <Button x:Name="StartButton" Style="{StaticResource PrimaryButton}" MinWidth="150"
+                            AutomationProperties.AutomationId="ConfirmStart"
+                            AutomationProperties.Name="Start" Click="Start_Click">
+                        <StackPanel Orientation="Horizontal">
+                            <Path Data="{StaticResource IconDownload}" Width="13" Height="13" Stretch="Uniform"
+                                  Fill="White" VerticalAlignment="Center" Margin="0,0,8,0"/>
+                            <TextBlock Text="{loc:Tr Confirm_Start}" Foreground="White" FontWeight="SemiBold"/>
+                        </StackPanel>
+                    </Button>
+                </StackPanel>
+            </Grid>
+        </Grid>
+    </Border>
+</Window>

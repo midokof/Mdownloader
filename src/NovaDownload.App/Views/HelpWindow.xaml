@@ -1,0 +1,75 @@
+<Window x:Class="NovaDownload.App.Views.HelpWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:loc="clr-namespace:NovaDownload.App.Markup"
+        Title="{loc:Tr Help_Title}"
+        Width="560" Height="620" MinWidth="480" MinHeight="480"
+        WindowStartupLocation="CenterOwner"
+        WindowStyle="None"
+        ResizeMode="CanResize"
+        ShowInTaskbar="False"
+        Background="{DynamicResource BgBrush}"
+        UseLayoutRounding="True"
+        SnapsToDevicePixels="True"
+        FontFamily="Segoe UI Variable Text, Segoe UI">
+
+    <WindowChrome.WindowChrome>
+        <WindowChrome CaptionHeight="0" ResizeBorderThickness="6" GlassFrameThickness="0"
+                      CornerRadius="0" UseAeroCaptionButtons="False"/>
+    </WindowChrome.WindowChrome>
+
+    <Border BorderBrush="{DynamicResource BorderBrush}" BorderThickness="1" Background="{DynamicResource BgBrush}">
+        <Grid Margin="24,18,24,18">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="*"/>
+                <RowDefinition Height="Auto"/>
+            </Grid.RowDefinitions>
+
+            <Grid Grid.Row="0" Background="Transparent" MouseLeftButtonDown="Header_MouseLeftButtonDown">
+                <StackPanel Orientation="Horizontal">
+                    <Border Width="32" Height="32" CornerRadius="9" Background="{DynamicResource PrimarySoftBrush}">
+                        <Path Data="{StaticResource IconHelp}" Width="14" Height="14" Stretch="Uniform"
+                              Fill="{DynamicResource PrimaryBrush}"/>
+                    </Border>
+                    <TextBlock Text="{loc:Tr Help_Title}" Style="{StaticResource H2Text}"
+                               VerticalAlignment="Center" Margin="10,0,0,0"/>
+                </StackPanel>
+                <Button Style="{StaticResource IconButton}" HorizontalAlignment="Right" VerticalAlignment="Top"
+                        AutomationProperties.Name="Close" Click="Close_Click">
+                    <Path Data="{StaticResource IconClose}" Width="10" Height="10" Stretch="Uniform"
+                          Fill="{DynamicResource TextSecondaryBrush}"/>
+                </Button>
+            </Grid>
+
+            <ScrollViewer Grid.Row="1" VerticalScrollBarVisibility="Auto" Margin="0,18,0,0">
+                <StackPanel>
+                    <TextBlock Text="{loc:Tr Help_Usage}" Style="{StaticResource SecondaryText}"
+                               TextWrapping="Wrap"/>
+
+                    <TextBlock Text="{loc:Tr Help_Shortcuts}" Style="{StaticResource CaptionText}" FontWeight="SemiBold" Margin="0,20,0,8"/>
+
+                    <Border Style="{StaticResource SoftCard}" Padding="14,10">
+                        <StackPanel>
+                            <TextBlock Text="{loc:Tr Help_ShortcutNew}" Style="{StaticResource BodyText}" Margin="0,3"/>
+                            <TextBlock Text="{loc:Tr Help_ShortcutPaste}" Style="{StaticResource BodyText}" Margin="0,3"/>
+                            <TextBlock Text="{loc:Tr Help_ShortcutFind}" Style="{StaticResource BodyText}" Margin="0,3"/>
+                            <TextBlock Text="{loc:Tr Help_ShortcutNext}" Style="{StaticResource BodyText}" Margin="0,3"/>
+                            <TextBlock Text="{loc:Tr Help_ShortcutRefresh}" Style="{StaticResource BodyText}" Margin="0,3"/>
+                            <TextBlock Text="{loc:Tr Help_ShortcutSpeed}" Style="{StaticResource BodyText}" Margin="0,3"/>
+                            <TextBlock Text="{loc:Tr Help_ShortcutSelectAll}" Style="{StaticResource BodyText}" Margin="0,3"/>
+                            <TextBlock Text="{loc:Tr Help_ShortcutDelete}" Style="{StaticResource BodyText}" Margin="0,3"/>
+                        </StackPanel>
+                    </Border>
+
+                    <TextBlock Text="{loc:Tr Help_TrayTitle}" Style="{StaticResource CaptionText}" FontWeight="SemiBold" Margin="0,20,0,8"/>
+                    <TextBlock Text="{loc:Tr Help_Tray}" Style="{StaticResource SecondaryText}" TextWrapping="Wrap"/>
+                </StackPanel>
+            </ScrollViewer>
+
+            <Button Grid.Row="2" Style="{StaticResource PrimaryButton}" Content="{loc:Tr About_Close}"
+                    HorizontalAlignment="Right" MinWidth="120" Margin="0,18,0,0"
+                    AutomationProperties.Name="Close help" Click="Close_Click"/>
+        </Grid>
+    </Border>
+</Window>

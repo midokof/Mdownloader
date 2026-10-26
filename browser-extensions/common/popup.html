@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <title>NovaDownload</title>
+    <link rel="stylesheet" href="lib/ui.css">
+    <link rel="stylesheet" href="popup.css">
+</head>
+<body>
+    <header class="header">
+        <img src="icons/icon48.png" alt="">
+        <span class="title" data-i18n="extName">NovaDownload</span>
+        <span class="spacer"></span>
+        <span class="status" id="status"><span class="dot" id="statusDot"></span><span id="statusText"></span></span>
+        <button class="icon ghost" id="refresh" data-i18n-title="btnRefresh" title="Rescan">&#8635;</button>
+    </header>
+
+    <div id="banner"></div>
+
+    <section class="section">
+        <div class="section-title">
+            <span data-i18n="sectionDetected">Detected on this page</span>
+            <span class="count" id="detectedCount">0</span>
+        </div>
+        <div class="list" id="detected"></div>
+        <div id="detectedEmpty" class="empty"></div>
+        <details class="unsupported" id="unsupportedBox" hidden>
+            <summary><span data-i18n="sectionUnsupported">Not supported</span> (<span id="unsupportedCount">0</span>)</summary>
+            <div class="list" id="unsupportedList"></div>
+        </details>
+    </section>
+
+    <section class="section" id="capturedSection" hidden>
+        <div class="section-title">
+            <span data-i18n="sectionCaptured">Seen by the browser</span>
+            <span class="count" id="capturedCount">0</span>
+        </div>
+        <div class="list" id="captured"></div>
+        <div class="hint" style="margin-top:8px">
+            <button class="ghost" id="clearCaptured" data-i18n="btnClearCaptured">Clear list</button>
+        </div>
+    </section>
+
+    <section class="section">
+        <div class="section-title" data-i18n="sectionPageLink">Send a link</div>
+        <div class="field">
+            <input type="text" id="pageLink" spellcheck="false" data-i18n-placeholder="pageLinkPlaceholder" placeholder="https://example.com/file.mp4">
+            <button class="primary" id="sendPage" data-i18n="btnSendPage">Send</button>
+        </div>
+        <div class="hint" id="destinationHint" style="margin-top:7px"></div>
+    </section>
+
+    <footer class="footer">
+        <button class="ghost" id="openApp" data-i18n="btnOpen">Open NovaDownload</button>
+        <span class="spacer"></span>
+        <a href="#" id="optionsLink" data-i18n="btnSettings">Settings</a>
+    </footer>
+
+    <script src="lib/compat.js"></script>
+    <script src="lib/i18n.js"></script>
+    <script src="lib/media.js"></script>
+    <script src="lib/native.js"></script>
+    <script src="popup.js"></script>
+</body>
+</html>

@@ -1,0 +1,97 @@
+<Window x:Class="NovaDownload.App.Views.SchedulerWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:loc="clr-namespace:NovaDownload.App.Markup"
+        Title="{loc:Tr Sched_Title}"
+        Width="500" SizeToContent="Height"
+        WindowStartupLocation="CenterOwner"
+        WindowStyle="None"
+        ResizeMode="NoResize"
+        ShowInTaskbar="False"
+        Background="{DynamicResource BgBrush}"
+        UseLayoutRounding="True"
+        SnapsToDevicePixels="True"
+        FontFamily="Segoe UI Variable Text, Segoe UI">
+
+    <WindowChrome.WindowChrome>
+        <WindowChrome CaptionHeight="0" ResizeBorderThickness="0" GlassFrameThickness="0"
+                      CornerRadius="0" UseAeroCaptionButtons="False"/>
+    </WindowChrome.WindowChrome>
+
+    <Border BorderBrush="{DynamicResource BorderBrush}" BorderThickness="1" Background="{DynamicResource BgBrush}">
+        <StackPanel Margin="22,18,22,18">
+            <Grid Background="Transparent" MouseLeftButtonDown="Header_MouseLeftButtonDown">
+                <StackPanel Orientation="Horizontal">
+                    <Border Width="32" Height="32" CornerRadius="9" Background="{DynamicResource PrimarySoftBrush}">
+                        <Path Data="{StaticResource IconCalendar}" Width="14" Height="14" Stretch="Uniform"
+                              Fill="{DynamicResource PrimaryBrush}"/>
+                    </Border>
+                    <TextBlock Text="{loc:Tr Sched_Title}" Style="{StaticResource H2Text}"
+                               VerticalAlignment="Center" Margin="10,0,0,0"/>
+                </StackPanel>
+                <Button Style="{StaticResource IconButton}" HorizontalAlignment="Right" VerticalAlignment="Top"
+                        AutomationProperties.Name="Close" Click="Cancel_Click">
+                    <Path Data="{StaticResource IconClose}" Width="10" Height="10" Stretch="Uniform"
+                          Fill="{DynamicResource TextSecondaryBrush}"/>
+                </Button>
+            </Grid>
+
+            <CheckBox Style="{StaticResource ToggleCheck}" IsChecked="{Binding Enabled}"
+                      Content="{loc:Tr Sched_Enable}" Margin="0,18,0,0"
+                      AutomationProperties.AutomationId="SchedulerEnabledBox"
+                      AutomationProperties.Name="Enable scheduler"
+                      Foreground="{DynamicResource TextPrimaryBrush}"/>
+
+            <Grid Margin="0,16,0,0">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*"/>
+                    <ColumnDefinition Width="16"/>
+                    <ColumnDefinition Width="*"/>
+                </Grid.ColumnDefinitions>
+
+                <StackPanel>
+                    <TextBlock Text="{loc:Tr Sched_Start}" Style="{StaticResource CaptionText}" FontWeight="SemiBold"
+                               Margin="0,0,0,6"/>
+                    <Border Style="{StaticResource InputFrame}">
+                        <TextBox Style="{StaticResource InputBox}"
+                                 AutomationProperties.AutomationId="SchedulerStartBox"
+                                 AutomationProperties.Name="Start time"
+                                 Text="{Binding StartText, UpdateSourceTrigger=PropertyChanged}"/>
+                    </Border>
+                </StackPanel>
+
+                <StackPanel Grid.Column="2">
+                    <TextBlock Text="{loc:Tr Sched_Stop}" Style="{StaticResource CaptionText}" FontWeight="SemiBold"
+                               Margin="0,0,0,6"/>
+                    <Border Style="{StaticResource InputFrame}">
+                        <TextBox Style="{StaticResource InputBox}"
+                                 AutomationProperties.AutomationId="SchedulerStopBox"
+                                 AutomationProperties.Name="Stop time"
+                                 Text="{Binding StopText, UpdateSourceTrigger=PropertyChanged}"/>
+                    </Border>
+                </StackPanel>
+            </Grid>
+
+            <TextBlock Text="{Binding StateText}" Style="{StaticResource CaptionText}" Margin="0,12,0,0"
+                       Foreground="{DynamicResource PrimaryBrush}"/>
+            <TextBlock Text="{loc:Tr Sched_Hint}" Style="{StaticResource CaptionText}" TextWrapping="Wrap"
+                       Margin="0,6,0,0"/>
+
+            <Border Margin="0,12,0,0" CornerRadius="8" Padding="10,8"
+                    Background="{DynamicResource ErrorSoftBrush}"
+                    Visibility="{Binding HasError, Converter={StaticResource BoolToVis}}">
+                <TextBlock Text="{Binding Error}" TextWrapping="Wrap" FontSize="12"
+                           Foreground="{DynamicResource ErrorBrush}"/>
+            </Border>
+
+            <StackPanel Orientation="Horizontal" HorizontalAlignment="Right" Margin="0,18,0,0">
+                <Button Style="{StaticResource SecondaryButton}" Content="{loc:Tr Btn_Cancel}"
+                        MinWidth="100" AutomationProperties.Name="Cancel" Click="Cancel_Click"/>
+                <Button Style="{StaticResource PrimaryButton}" Content="{loc:Tr Btn_Ok}"
+                        MinWidth="110" Margin="8,0,0,0"
+                        AutomationProperties.AutomationId="SchedulerConfirm"
+                        AutomationProperties.Name="OK" Click="Confirm_Click"/>
+            </StackPanel>
+        </StackPanel>
+    </Border>
+</Window>

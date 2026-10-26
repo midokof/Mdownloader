@@ -1,0 +1,419 @@
+<Window x:Class="NovaDownload.App.Views.OptionsWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:loc="clr-namespace:NovaDownload.App.Markup"
+        Title="{loc:Tr Opt_Title}"
+        Width="900" Height="680" MinWidth="780" MinHeight="560"
+        WindowStartupLocation="CenterOwner"
+        WindowStyle="None"
+        ResizeMode="CanResize"
+        ShowInTaskbar="False"
+        Background="{DynamicResource BgBrush}"
+        UseLayoutRounding="True"
+        SnapsToDevicePixels="True"
+        FontFamily="Segoe UI Variable Text, Segoe UI">
+
+    <WindowChrome.WindowChrome>
+        <WindowChrome CaptionHeight="0" ResizeBorderThickness="6" GlassFrameThickness="0"
+                      CornerRadius="0" UseAeroCaptionButtons="False"/>
+    </WindowChrome.WindowChrome>
+
+    <Border BorderBrush="{DynamicResource BorderBrush}" BorderThickness="1" Background="{DynamicResource BgBrush}">
+        <Grid>
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="196"/>
+                <ColumnDefinition Width="*"/>
+            </Grid.ColumnDefinitions>
+
+            <!-- tab rail -->
+            <Border Grid.Column="0" Background="{DynamicResource SidebarBrush}"
+                    BorderBrush="{DynamicResource BorderBrush}" BorderThickness="0,0,1,0">
+                <StackPanel Margin="12,16,12,16">
+                    <TextBlock Text="{loc:Tr Opt_Title}" Style="{StaticResource H2Text}" Margin="10,0,0,14"/>
+
+                    <RadioButton Style="{StaticResource TabButton}" GroupName="OptionsTab"
+                                 Content="{loc:Tr Opt_TabGeneral}"
+                                 IsChecked="{Binding IsGeneralTab, Mode=OneWay}"
+                                 Command="{Binding SelectTabCommand}" CommandParameter="General"/>
+
+                    <RadioButton Style="{StaticResource TabButton}" GroupName="OptionsTab"
+                                 Content="{loc:Tr Opt_TabConnections}"
+                                 IsChecked="{Binding IsConnectionsTab, Mode=OneWay}"
+                                 Command="{Binding SelectTabCommand}" CommandParameter="Connections"/>
+
+                    <RadioButton Style="{StaticResource TabButton}" GroupName="OptionsTab"
+                                 Content="{loc:Tr Opt_TabProxy}"
+                                 IsChecked="{Binding IsProxyTab, Mode=OneWay}"
+                                 Command="{Binding SelectTabCommand}" CommandParameter="Proxy"/>
+
+                    <RadioButton Style="{StaticResource TabButton}" GroupName="OptionsTab"
+                                 Content="{loc:Tr Opt_TabSpeed}"
+                                 IsChecked="{Binding IsSpeedTab, Mode=OneWay}"
+                                 Command="{Binding SelectTabCommand}" CommandParameter="Speed"/>
+
+                    <RadioButton Style="{StaticResource TabButton}" GroupName="OptionsTab"
+                                 Content="{loc:Tr Opt_TabCategories}"
+                                 IsChecked="{Binding IsCategoriesTab, Mode=OneWay}"
+                                 Command="{Binding SelectTabCommand}" CommandParameter="Categories"/>
+
+                    <RadioButton Style="{StaticResource TabButton}" GroupName="OptionsTab"
+                                 Content="{loc:Tr Opt_TabTorrents}"
+                                 IsChecked="{Binding IsTorrentsTab, Mode=OneWay}"
+                                 Command="{Binding SelectTabCommand}" CommandParameter="Torrents"/>
+
+                    <RadioButton Style="{StaticResource TabButton}" GroupName="OptionsTab"
+                                 Content="{loc:Tr Opt_TabInterface}"
+                                 IsChecked="{Binding IsInterfaceTab, Mode=OneWay}"
+                                 Command="{Binding SelectTabCommand}" CommandParameter="Interface"/>
+
+                    <RadioButton Style="{StaticResource TabButton}" GroupName="OptionsTab"
+                                 Content="{loc:Tr Opt_TabBrowser}"
+                                 IsChecked="{Binding IsBrowserTab, Mode=OneWay}"
+                                 Command="{Binding SelectTabCommand}" CommandParameter="Browser"/>
+                </StackPanel>
+            </Border>
+
+            <!-- content -->
+            <Grid Grid.Column="1">
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="*"/>
+                    <RowDefinition Height="Auto"/>
+                </Grid.RowDefinitions>
+
+                <Grid Grid.Row="0" Background="Transparent" Margin="22,16,16,0"
+                      MouseLeftButtonDown="Header_MouseLeftButtonDown">
+                    <TextBlock Text="{loc:Tr Opt_Title}" Style="{StaticResource H1Text}" VerticalAlignment="Center"/>
+                    <Button Style="{StaticResource IconButton}" HorizontalAlignment="Right" VerticalAlignment="Top"
+                            AutomationProperties.Name="Close" Click="Cancel_Click">
+                        <Path Data="{StaticResource IconClose}" Width="10" Height="10" Stretch="Uniform"
+                              Fill="{DynamicResource TextSecondaryBrush}"/>
+                    </Button>
+                </Grid>
+
+                <ScrollViewer Grid.Row="1" VerticalScrollBarVisibility="Auto" Margin="22,12,18,0">
+                    <Grid>
+
+                        <!-- ============ Général ============ -->
+                        <StackPanel Visibility="{Binding IsGeneralTab, Converter={StaticResource BoolToVis}}">
+                            <TextBlock Text="{loc:Tr Field_DefaultFolder}" Style="{StaticResource CaptionText}"
+                                       FontWeight="SemiBold" Margin="0,0,0,6"/>
+                            <Grid>
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="*"/>
+                                    <ColumnDefinition Width="Auto"/>
+                                </Grid.ColumnDefinitions>
+                                <Border Style="{StaticResource InputFrame}">
+                                    <TextBox Style="{StaticResource InputBox}"
+                                             AutomationProperties.AutomationId="OptionsFolderBox"
+                                             Text="{Binding DownloadDirectory, UpdateSourceTrigger=PropertyChanged}"/>
+                                </Border>
+                                <Button Grid.Column="1" Style="{StaticResource SecondaryButton}" Margin="8,0,0,0"
+                                        Padding="14,7" Command="{Binding BrowseCommand}"
+                                        AutomationProperties.Name="Browse default folder">
+                                    <StackPanel Orientation="Horizontal">
+                                        <Path Data="{StaticResource IconFolder}" Width="13" Height="13" Stretch="Uniform"
+                                              Fill="{DynamicResource TextSecondaryBrush}" Margin="0,0,7,0"/>
+                                        <TextBlock Text="{loc:Tr Btn_Browse}" Foreground="{DynamicResource TextPrimaryBrush}"/>
+                                    </StackPanel>
+                                </Button>
+                            </Grid>
+
+                            <TextBlock Text="{loc:Tr Set_Concurrency}" Style="{StaticResource CaptionText}"
+                                       FontWeight="SemiBold" Margin="0,18,0,6"/>
+                            <Border Style="{StaticResource InputFrame}">
+                                <TextBox Style="{StaticResource InputBox}"
+                                         AutomationProperties.AutomationId="OptionsConcurrentBox"
+                                         Text="{Binding MaxConcurrentDownloads, UpdateSourceTrigger=PropertyChanged}"/>
+                            </Border>
+                            <TextBlock Text="{loc:Tr Set_ConcurrencyHint}" Style="{StaticResource CaptionText}"
+                                       Margin="0,6,0,0" TextWrapping="Wrap"/>
+
+                            <CheckBox Style="{StaticResource ToggleCheck}" IsChecked="{Binding NotifyOnComplete}"
+                                      Content="{loc:Tr Set_Notify}" Margin="0,18,0,0"
+                                      Foreground="{DynamicResource TextPrimaryBrush}"/>
+
+                            <CheckBox Style="{StaticResource ToggleCheck}" IsChecked="{Binding MinimizeToTray}"
+                                      Content="{loc:Tr Set_MinimizeToTray}" Margin="0,10,0,0"
+                                      Foreground="{DynamicResource TextPrimaryBrush}"/>
+                        </StackPanel>
+
+                        <!-- ============ Connexions ============ -->
+                        <StackPanel Visibility="{Binding IsConnectionsTab, Converter={StaticResource BoolToVis}}">
+                            <TextBlock Text="{loc:Tr Opt_ConnectionsPerDownload}" Style="{StaticResource CaptionText}"
+                                       FontWeight="SemiBold" Margin="0,0,0,6"/>
+                            <Border Style="{StaticResource InputFrame}">
+                                <TextBox Style="{StaticResource InputBox}"
+                                         AutomationProperties.AutomationId="OptionsConnectionsBox"
+                                         Text="{Binding ConnectionsPerDownload, UpdateSourceTrigger=PropertyChanged}"/>
+                            </Border>
+                            <TextBlock Text="{loc:Tr Opt_ConnectionsHint}" Style="{StaticResource CaptionText}"
+                                       Margin="0,6,0,0" TextWrapping="Wrap"/>
+
+                            <TextBlock Text="{loc:Tr Opt_RetryCount}" Style="{StaticResource CaptionText}"
+                                       FontWeight="SemiBold" Margin="0,18,0,6"/>
+                            <Border Style="{StaticResource InputFrame}">
+                                <TextBox Style="{StaticResource InputBox}"
+                                         AutomationProperties.AutomationId="OptionsRetryBox"
+                                         Text="{Binding RetryCount, UpdateSourceTrigger=PropertyChanged}"/>
+                            </Border>
+
+                            <TextBlock Text="{loc:Tr Opt_RetryDelay}" Style="{StaticResource CaptionText}"
+                                       FontWeight="SemiBold" Margin="0,18,0,6"/>
+                            <Border Style="{StaticResource InputFrame}">
+                                <TextBox Style="{StaticResource InputBox}"
+                                         AutomationProperties.AutomationId="OptionsRetryDelayBox"
+                                         Text="{Binding RetryDelayMs, UpdateSourceTrigger=PropertyChanged}"/>
+                            </Border>
+                            <TextBlock Text="{loc:Tr Opt_RetryDelayHint}" Style="{StaticResource CaptionText}"
+                                       Margin="0,6,0,0" TextWrapping="Wrap"/>
+                        </StackPanel>
+
+                        <!-- ============ Proxy ============ -->
+                        <StackPanel Visibility="{Binding IsProxyTab, Converter={StaticResource BoolToVis}}">
+                            <TextBlock Text="{loc:Tr Opt_ProxyMode}" Style="{StaticResource CaptionText}"
+                                       FontWeight="SemiBold" Margin="0,0,0,6"/>
+                            <ComboBox Height="34" Background="{DynamicResource SurfaceAltBrush}"
+                                      Foreground="{DynamicResource TextPrimaryBrush}"
+                                      BorderBrush="{DynamicResource BorderBrush}"
+                                      AutomationProperties.AutomationId="OptionsProxyModeBox"
+                                      SelectedValuePath="Tag" SelectedValue="{Binding ProxyMode}">
+                                <ComboBoxItem Content="{loc:Tr Opt_ProxyDirect}" Tag="Direct"/>
+                                <ComboBoxItem Content="{loc:Tr Opt_ProxySystem}" Tag="System"/>
+                                <ComboBoxItem Content="{loc:Tr Opt_ProxyManual}" Tag="Manual"/>
+                            </ComboBox>
+
+                            <Grid Margin="0,18,0,0">
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="*"/>
+                                    <ColumnDefinition Width="130"/>
+                                </Grid.ColumnDefinitions>
+                                <StackPanel>
+                                    <TextBlock Text="{loc:Tr Opt_ProxyHost}" Style="{StaticResource CaptionText}"
+                                               FontWeight="SemiBold" Margin="0,0,0,6"/>
+                                    <Border Style="{StaticResource InputFrame}">
+                                        <TextBox Style="{StaticResource InputBox}"
+                                                 AutomationProperties.AutomationId="OptionsProxyHostBox"
+                                                 Text="{Binding ProxyHost, UpdateSourceTrigger=PropertyChanged}"/>
+                                    </Border>
+                                </StackPanel>
+                                <StackPanel Grid.Column="1" Margin="12,0,0,0">
+                                    <TextBlock Text="{loc:Tr Opt_ProxyPort}" Style="{StaticResource CaptionText}"
+                                               FontWeight="SemiBold" Margin="0,0,0,6"/>
+                                    <Border Style="{StaticResource InputFrame}">
+                                        <TextBox Style="{StaticResource InputBox}"
+                                                 AutomationProperties.AutomationId="OptionsProxyPortBox"
+                                                 Text="{Binding ProxyPort, UpdateSourceTrigger=PropertyChanged}"/>
+                                    </Border>
+                                </StackPanel>
+                            </Grid>
+
+                            <TextBlock Text="{loc:Tr Opt_ProxyHint}" Style="{StaticResource CaptionText}"
+                                       Margin="0,10,0,0" TextWrapping="Wrap"/>
+                        </StackPanel>
+
+                        <!-- ============ Limiteur ============ -->
+                        <StackPanel Visibility="{Binding IsSpeedTab, Converter={StaticResource BoolToVis}}">
+                            <TextBlock Text="{loc:Tr Opt_SpeedLimit}" Style="{StaticResource CaptionText}"
+                                       FontWeight="SemiBold" Margin="0,0,0,6"/>
+                            <Border Style="{StaticResource InputFrame}">
+                                <TextBox Style="{StaticResource InputBox}"
+                                         AutomationProperties.AutomationId="OptionsSpeedBox"
+                                         Text="{Binding SpeedLimitKib, UpdateSourceTrigger=PropertyChanged}"/>
+                            </Border>
+                            <TextBlock Text="{loc:Tr Speed_Hint}" Style="{StaticResource CaptionText}"
+                                       Margin="0,8,0,0" TextWrapping="Wrap"/>
+                            <TextBlock Text="{loc:Tr Opt_SpeedShared}" Style="{StaticResource CaptionText}"
+                                       Margin="0,10,0,0" TextWrapping="Wrap"/>
+                        </StackPanel>
+
+                        <!-- ============ Catégories ============ -->
+                        <StackPanel Visibility="{Binding IsCategoriesTab, Converter={StaticResource BoolToVis}}">
+                            <TextBlock Text="{loc:Tr Opt_CategoriesHint}" Style="{StaticResource CaptionText}"
+                                       TextWrapping="Wrap" Margin="0,0,0,10"/>
+
+                            <Grid>
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="210"/>
+                                    <ColumnDefinition Width="*"/>
+                                </Grid.ColumnDefinitions>
+
+                                <ListBox Style="{StaticResource ShellListBox}" Height="260"
+                                         ItemsSource="{Binding CategoryRows}"
+                                         DisplayMemberPath="Label"
+                                         SelectedItem="{Binding SelectedCategoryRow}"
+                                         AutomationProperties.AutomationId="OptionsCategoryList"/>
+
+                                <StackPanel Grid.Column="1" Margin="16,0,0,0">
+                                    <TextBlock Text="{loc:Tr Opt_CategoryFolder}" Style="{StaticResource CaptionText}"
+                                               FontWeight="SemiBold" Margin="0,0,0,6"/>
+                                    <Border Style="{StaticResource InputFrame}">
+                                        <TextBox Style="{StaticResource InputBox}"
+                                                 AutomationProperties.AutomationId="OptionsCategoryFolderBox"
+                                                 Text="{Binding SelectedCategoryRow.Folder, UpdateSourceTrigger=PropertyChanged}"/>
+                                    </Border>
+
+                                    <StackPanel Orientation="Horizontal" Margin="0,10,0,0">
+                                        <Button Style="{StaticResource SecondaryButton}" Padding="12,7"
+                                                Content="{loc:Tr Btn_Browse}"
+                                                Command="{Binding BrowseCategoryCommand}"
+                                                AutomationProperties.Name="Browse category folder"/>
+                                        <Button Style="{StaticResource SecondaryButton}" Padding="12,7" Margin="8,0,0,0"
+                                                Content="{loc:Tr Opt_CategoryDefault}"
+                                                Command="{Binding DefaultCategoryCommand}"
+                                                AutomationProperties.Name="Use default folder"/>
+                                    </StackPanel>
+
+                                    <TextBlock Text="{loc:Tr Opt_CategoryExtensions}" Style="{StaticResource CaptionText}"
+                                               FontWeight="SemiBold" Margin="0,18,0,6"/>
+                                    <TextBlock Text="{Binding SelectedCategoryRow.Extensions}"
+                                               Style="{StaticResource CaptionText}" TextWrapping="Wrap"/>
+                                </StackPanel>
+                            </Grid>
+                        </StackPanel>
+
+                        <!-- ============ BitTorrent ============ -->
+                        <StackPanel Visibility="{Binding IsTorrentsTab, Converter={StaticResource BoolToVis}}">
+                            <TextBlock Text="{loc:Tr Set_TorrentPort}" Style="{StaticResource CaptionText}"
+                                       FontWeight="SemiBold" Margin="0,0,0,6"/>
+                            <Border Style="{StaticResource InputFrame}">
+                                <TextBox Style="{StaticResource InputBox}"
+                                         AutomationProperties.AutomationId="OptionsTorrentPortBox"
+                                         Text="{Binding TorrentListenPort, UpdateSourceTrigger=PropertyChanged}"/>
+                            </Border>
+                            <TextBlock Text="{loc:Tr Set_TorrentPortHint}" Style="{StaticResource CaptionText}"
+                                       Margin="0,6,0,0" TextWrapping="Wrap"/>
+
+                            <CheckBox Style="{StaticResource ToggleCheck}" IsChecked="{Binding TorrentEnableDht}"
+                                      Content="{loc:Tr Set_TorrentDht}" Margin="0,16,0,0"
+                                      Foreground="{DynamicResource TextPrimaryBrush}"/>
+                            <CheckBox Style="{StaticResource ToggleCheck}" IsChecked="{Binding TorrentEnablePex}"
+                                      Content="{loc:Tr Set_TorrentPex}" Margin="0,8,0,0"
+                                      Foreground="{DynamicResource TextPrimaryBrush}"/>
+                            <CheckBox Style="{StaticResource ToggleCheck}" IsChecked="{Binding TorrentEnableLpd}"
+                                      Content="{loc:Tr Set_TorrentLpd}" Margin="0,8,0,0"
+                                      Foreground="{DynamicResource TextPrimaryBrush}"/>
+                            <CheckBox Style="{StaticResource ToggleCheck}" IsChecked="{Binding TorrentEnablePortForwarding}"
+                                      Content="{loc:Tr Set_TorrentForward}" Margin="0,8,0,0"
+                                      Foreground="{DynamicResource TextPrimaryBrush}"/>
+                            <CheckBox Style="{StaticResource ToggleCheck}" IsChecked="{Binding TorrentSeedAfterCompletion}"
+                                      Content="{loc:Tr Set_TorrentSeed}" Margin="0,8,0,0"
+                                      Foreground="{DynamicResource TextPrimaryBrush}"/>
+                            <CheckBox Style="{StaticResource ToggleCheck}" IsChecked="{Binding TorrentHandleMagnetLinks}"
+                                      Content="{loc:Tr Set_TorrentMagnet}" Margin="0,8,0,0"
+                                      AutomationProperties.AutomationId="OptionsMagnetBox"
+                                      Foreground="{DynamicResource TextPrimaryBrush}"/>
+
+                            <Grid Margin="0,18,0,0">
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="*"/>
+                                    <ColumnDefinition Width="*"/>
+                                </Grid.ColumnDefinitions>
+                                <StackPanel>
+                                    <TextBlock Text="{loc:Tr Set_TorrentConnections}" Style="{StaticResource CaptionText}"
+                                               FontWeight="SemiBold" Margin="0,0,0,6"/>
+                                    <Border Style="{StaticResource InputFrame}">
+                                        <TextBox Style="{StaticResource InputBox}"
+                                                 Text="{Binding TorrentConnectionsPerTorrent, UpdateSourceTrigger=PropertyChanged}"/>
+                                    </Border>
+                                </StackPanel>
+                                <StackPanel Grid.Column="1" Margin="12,0,0,0">
+                                    <TextBlock Text="{loc:Tr Set_TorrentConnectionsTotal}" Style="{StaticResource CaptionText}"
+                                               FontWeight="SemiBold" Margin="0,0,0,6"/>
+                                    <Border Style="{StaticResource InputFrame}">
+                                        <TextBox Style="{StaticResource InputBox}"
+                                                 Text="{Binding TorrentMaxConnections, UpdateSourceTrigger=PropertyChanged}"/>
+                                    </Border>
+                                </StackPanel>
+                            </Grid>
+
+                            <TextBlock Text="{loc:Tr Set_TorrentUploadLimit}" Style="{StaticResource CaptionText}"
+                                       FontWeight="SemiBold" Margin="0,18,0,6"/>
+                            <Border Style="{StaticResource InputFrame}">
+                                <TextBox Style="{StaticResource InputBox}"
+                                         Text="{Binding TorrentMaxUploadKib, UpdateSourceTrigger=PropertyChanged}"/>
+                            </Border>
+                        </StackPanel>
+
+                        <!-- ============ Interface ============ -->
+                        <StackPanel Visibility="{Binding IsInterfaceTab, Converter={StaticResource BoolToVis}}">
+                            <TextBlock Text="{loc:Tr Opt_Theme}" Style="{StaticResource CaptionText}"
+                                       FontWeight="SemiBold" Margin="0,0,0,8"/>
+                            <StackPanel Orientation="Horizontal">
+                                <RadioButton Content="{loc:Tr Theme_Light}" GroupName="ThemeChoice"
+                                             Foreground="{DynamicResource TextPrimaryBrush}"
+                                             IsChecked="{Binding IsDark, Mode=OneWay, Converter={StaticResource InverseBool}}"
+                                             Command="{Binding SetLightCommand}"
+                                             AutomationProperties.Name="Light theme"/>
+                                <RadioButton Content="{loc:Tr Theme_Dark}" GroupName="ThemeChoice" Margin="20,0,0,0"
+                                             Foreground="{DynamicResource TextPrimaryBrush}"
+                                             IsChecked="{Binding IsDark, Mode=OneWay}"
+                                             Command="{Binding SetDarkCommand}"
+                                             AutomationProperties.Name="Dark theme"/>
+                            </StackPanel>
+
+                            <TextBlock Text="{loc:Tr Opt_Language}" Style="{StaticResource CaptionText}"
+                                       FontWeight="SemiBold" Margin="0,20,0,8"/>
+                            <StackPanel Orientation="Horizontal">
+                                <RadioButton Content="{loc:Tr Lang_System}" GroupName="LangChoice"
+                                             Foreground="{DynamicResource TextPrimaryBrush}"
+                                             IsChecked="{Binding UseSystemLanguage}"
+                                             AutomationProperties.Name="System language"/>
+                                <RadioButton Content="{loc:Tr Lang_French}" GroupName="LangChoice" Margin="20,0,0,0"
+                                             Foreground="{DynamicResource TextPrimaryBrush}"
+                                             IsChecked="{Binding UseFrench}"
+                                             AutomationProperties.Name="French"/>
+                                <RadioButton Content="{loc:Tr Lang_English}" GroupName="LangChoice" Margin="20,0,0,0"
+                                             Foreground="{DynamicResource TextPrimaryBrush}"
+                                             IsChecked="{Binding UseEnglish}"
+                                             AutomationProperties.Name="English"/>
+                            </StackPanel>
+                        </StackPanel>
+
+                        <!-- ============ Navigateur ============ -->
+                        <StackPanel Visibility="{Binding IsBrowserTab, Converter={StaticResource BoolToVis}}">
+                            <CheckBox Style="{StaticResource ToggleCheck}" IsChecked="{Binding EnableBrowserIntegration}"
+                                      Content="{loc:Tr Set_BrowserEnable}" Margin="0,0,0,0"
+                                      Foreground="{DynamicResource TextPrimaryBrush}"/>
+                            <CheckBox Style="{StaticResource ToggleCheck}" IsChecked="{Binding ActivateOnBrowserDownload}"
+                                      Content="{loc:Tr Set_BrowserActivate}" Margin="0,10,0,0"
+                                      Foreground="{DynamicResource TextPrimaryBrush}"/>
+
+                            <TextBlock Text="{loc:Tr Set_BrowserStatusLabel}" Style="{StaticResource CaptionText}"
+                                       FontWeight="SemiBold" Margin="0,20,0,6"/>
+                            <TextBlock Text="{Binding BrowserStatusText}" Style="{StaticResource SecondaryText}"
+                                       TextWrapping="Wrap"/>
+                            <TextBlock Text="{Binding BrowserIdsText}" Style="{StaticResource CaptionText}"
+                                       TextWrapping="Wrap" Margin="0,10,0,0"/>
+
+                            <StackPanel Orientation="Horizontal" Margin="0,16,0,0">
+                                <Button Style="{StaticResource SecondaryButton}" Padding="12,7"
+                                        Content="{loc:Tr Btn_RegisterBrowser}"
+                                        Command="{Binding RegisterBrowserIntegrationCommand}"
+                                        AutomationProperties.Name="Register browser integration"/>
+                            </StackPanel>
+
+                            <TextBlock Text="{Binding BrowserMessage}" Style="{StaticResource CaptionText}"
+                                       TextWrapping="Wrap" Margin="0,12,0,0"
+                                       Foreground="{DynamicResource PrimaryBrush}"/>
+                        </StackPanel>
+                    </Grid>
+                </ScrollViewer>
+
+                <!-- footer -->
+                <Grid Grid.Row="2" Margin="22,14,18,16">
+                    <TextBlock Text="{Binding SavedMessage}" Style="{StaticResource CaptionText}"
+                               VerticalAlignment="Center" Foreground="{DynamicResource SuccessBrush}"/>
+                    <StackPanel Orientation="Horizontal" HorizontalAlignment="Right">
+                        <Button Style="{StaticResource SecondaryButton}" Content="{loc:Tr Btn_Cancel}"
+                                MinWidth="110" AutomationProperties.Name="Cancel" Click="Cancel_Click"/>
+                        <Button Style="{StaticResource PrimaryButton}" Content="{loc:Tr Btn_Ok}"
+                                MinWidth="130" Margin="8,0,0,0"
+                                AutomationProperties.AutomationId="OptionsConfirm"
+                                AutomationProperties.Name="OK" Click="Confirm_Click"/>
+                    </StackPanel>
+                </Grid>
+            </Grid>
+        </Grid>
+    </Border>
+</Window>
