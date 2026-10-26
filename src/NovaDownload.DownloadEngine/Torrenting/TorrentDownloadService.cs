@@ -812,9 +812,12 @@ public sealed class TorrentDownloadService : IDownloadService, IAsyncDisposable
             try
             {
                 await StopQuietlyAsync(transfer.Manager).ConfigureAwait(false);
-                await _engine.RemoveAsync(transfer.Manager, RemoveMode.DownloadedDataOnly).ConfigureAwait(false);
+                if (transfer.Manager.State is not TorrentState.Stopping)
+                {
+                    await _engine.RemoveAsync(transfer.Manager, RemoveMode.DownloadedDataOnly).ConfigureAwait(false);
+                }
             }
-            catch (Exception ex)
+            catch (Exception ex) when (!ex.Message.Contains("Stopping state", StringComparison.OrdinalIgnoreCase))
             {
                 _log?.Invoke($"torrent removal failed: {ex.Message}");
             }
@@ -865,14 +868,14 @@ public sealed class TorrentDownloadService : IDownloadService, IAsyncDisposable
             try
             {
                 await StopQuietlyAsync(transfer.Manager).ConfigureAwait(false);
-                if (_engine != null)
+                if (transfer.Manager.State is not TorrentState.Stopping && _engine != null)
                 {
                     await _engine.RemoveAsync(transfer.Manager,
                             deleteFiles ? RemoveMode.DownloadedDataOnly : RemoveMode.KeepAllData)
                         .ConfigureAwait(false);
                 }
             }
-            catch (Exception ex)
+            catch (Exception ex) when (!ex.Message.Contains("Stopping state", StringComparison.OrdinalIgnoreCase))
             {
                 _log?.Invoke($"torrent detach failed: {ex.Message}");
             }
@@ -888,7 +891,7 @@ public sealed class TorrentDownloadService : IDownloadService, IAsyncDisposable
     private static async Task StopQuietlyAsync(TorrentManager manager)
     {
         var waited = 0;
-        while (manager.State == TorrentState.Stopping && waited < 5000)
+        while (manager.State == TorrentState.Stopping && waited < 10000)
         {
             await Task.Delay(100).ConfigureAwait(false);
             waited += 100;
